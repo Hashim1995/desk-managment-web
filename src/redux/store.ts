@@ -1,10 +1,6 @@
 import { LayoutLanguage } from '@/models/common';
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './auth/auth-slice';
-import emaReducer from './ema/ema-slice';
-import statisticReducer from './statistics/statistics-slice';
-import chatReducer from './chat/chat-slice';
-import assistantReducer from './assistant/assistant-slice';
 import coreReducer from './core/core-slice';
 
 // Define the initial layout language based on the value stored in localStorage, or use Azerbaijani as the default
@@ -32,10 +28,6 @@ const preloadedState = {
 export const store = configureStore({
   reducer: {
     user: authReducer,
-    ema: emaReducer,
-    statisticsCount: statisticReducer,
-    chat: chatReducer,
-    assistant: assistantReducer,
     core: coreReducer
   },
   preloadedState

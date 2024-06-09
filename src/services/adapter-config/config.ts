@@ -54,7 +54,7 @@ axios.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const language = localStorage.getItem('currentLayoutLanguage');
   // Replace with your token retrieval logic
   if (token) {
-    config.headers.Authorization = `Bearer ${token.token}`;
+    config.headers.Authorization = `Bearer ${token?.token}`;
     if (language) {
       config.headers['Accept-Language'] = language;
       config.headers['X-Api-Locale'] = language;
@@ -80,11 +80,11 @@ axios.interceptors.response.use(
         switch (status) {
           case 401:
             localStorage.removeItem('userToken');
-            window.location.href = `/login`;
+            window.location.href = `/sign-in`;
             break;
-          case 403:
-            window.location.href = '/no-permission';
-            break;
+          // case 403:
+          //   window.location.href = '/no-permission';
+          //   break;
           default:
             // ErrorHandler.getInstance().showError(axiosErrorHandler(error))
             break;

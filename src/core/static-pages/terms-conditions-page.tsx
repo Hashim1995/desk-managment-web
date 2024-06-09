@@ -3,13 +3,14 @@ export default function TermsandConditionsPage() {
     <div className="p-20 min-h-screen overflow-y-auto remove-scrollbar">
       <div className="justify-center pr-3 h-96">
         <p className="pb-6 text-md">
-          We, in ABLARVA, (" Company ", "we", "us", "our") are committed to
-          protecting your personal information and your right to privacy.
+          We, in Desk managment web, (" Company ", "we", "us", "our") are
+          committed to protecting your personal information and your right to
+          privacy.
         </p>
         <p className="pb-6 text-md">
           When you visit our website{' '}
           <a href="/" className="text-emerald-500">
-            https:// ABLARVA
+            https:// Desk managment web
           </a>{' '}
           (the "Website"), and more generally, use any of our services (the
           "Services", which include the Website ), we appreciate that you are
@@ -324,12 +325,12 @@ export default function TermsandConditionsPage() {
           also have the right to object to the processing of your personal
           information. To make such a request, please use our contact email{' '}
           <a
-            href="mailto:info@ ABLARVA.com"
+            href="mailto:info@ Desk managment web.com"
             target="blank"
             className="text-emerald-500"
             aria-label="Contact WindUI link"
           >
-            info@ ABLARVA.com
+            info@ Desk managment web.com
           </a>
           . We will consider and act upon any request in accordance with
           applicable data protection laws.
@@ -348,19 +349,19 @@ export default function TermsandConditionsPage() {
           right to complain to your local data protection supervisory authority.
           You can find their contact details here:{' '}
           <a className="text-emerald-500" href="/#">
-            ABLARVA.az
+            Desk managment web.az
           </a>
         </p>
         <p className="pb-6 text-md">
           If you have questions or comments about your privacy rights, you may
           contact us through our email{' '}
           <a
-            href="mailto:info@ABLARVA.az"
+            href="mailto:info@Desk managment web.az"
             aria-label="Contact WindUI link"
             target="blank"
             className="text-emerald-500"
           >
-            info@ABLARVA.az
+            info@Desk managment web.az
           </a>
           .
         </p>
@@ -412,11 +413,11 @@ export default function TermsandConditionsPage() {
           If you have questions or comments about this notice, you may contact
           us here{' '}
           <a
-            href="mailto:info@ABLARVA.az"
+            href="mailto:info@Desk managment web.az"
             target="blank"
             className="text-emerald-500"
           >
-            info@ABLARVA.az
+            info@Desk managment web.az
           </a>
         </p>
       </div>

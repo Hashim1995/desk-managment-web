@@ -8,6 +8,19 @@ import { selectOption } from '@/models/common';
 import { IHTTPSParams } from '@/services/adapter-config/config';
 import i18next from 'i18next';
 
+
+let userToken: any = null;
+const storedToken = localStorage.getItem('userToken');
+
+if (storedToken) {
+  try {
+    userToken = JSON.parse(storedToken);
+  } catch (error) {
+    console.error('Error parsing JSON:', error);
+  }
+}
+
+
 /**
  * Converts form data to query parameters.
  * @param formData - The form data to convert.
@@ -115,7 +128,7 @@ function generateOptionListPerNumber(num: number): selectOption[] {
  * @returns A Promise that resolves to the tokenized image file.
  */
 
-async function tokenizeImage(file: any, userToken: any): Promise<any> {
+const tokenizeImage = async (file: any): Promise<any> => {
   const newFile = {
     ...file,
     status: 'done'
@@ -129,11 +142,15 @@ async function tokenizeImage(file: any, userToken: any): Promise<any> {
     const objectUrl = URL.createObjectURL(blob);
     newFile.url = objectUrl;
   } else {
+    console.log(src, 'test55');
+    const headers = new Headers();
+    headers.append('Authorization', `Bearer ${userToken?.token}`);
+
     const response = await fetch(src, {
-      headers: {
-        AuthPerson: userToken?.replace(/['"]+/g, '')
-      }
+      headers
     });
+    console.log(response, 'test55');
+
     if (response.ok) {
       const blob = await response.blob();
       const objectUrl = URL.createObjectURL(blob);
@@ -143,7 +160,7 @@ async function tokenizeImage(file: any, userToken: any): Promise<any> {
     }
   }
   return newFile;
-}
+};
 
 /**
  * Capitalizes the first letter of each word in a given string.

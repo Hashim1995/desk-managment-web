@@ -1,33 +1,18 @@
 /* eslint-disable no-useless-catch */
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { AuthService } from '@/services/auth-services/auth-services';
-import { IUserData } from '@/models/user';
+import { IAuth } from '@/models/user';
 
 // Define the initial state of the user slice
 
 interface AuthSliceInitalState {
   status: string;
   error: unknown;
-  user: IUserData;
+  user: IAuth;
 }
 
 const initialState: AuthSliceInitalState = {
-  user: {
-    email: '',
-    accessToken: '',
-    firstName: '',
-    timezone: '',
-    countryName: '',
-    lastName: '',
-    emailAssistant: {
-      currentSubscriptionDetails: null,
-      currentQuotaDetailsDto: null
-    },
-    id: 0,
-    gender: 0,
-    dateOfBirth: '',
-    verified: false
-  },
+  user: null,
   status: 'idle', // 'idle', 'loading', 'succeeded', 'failed'
   error: null
 };
@@ -38,7 +23,7 @@ export const fetchUserData = createAsyncThunk(
   async () => {
     try {
       const response = await AuthService.getInstance().getMe();
-      return response.data;
+      return response;
     } catch (err) {
       throw err;
     }

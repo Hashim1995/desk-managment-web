@@ -1,8 +1,7 @@
-import { DatePicker } from '@nextui-org/date-picker';
+import { TimeInput } from '@nextui-org/react';
 import { ReactElement } from 'react';
 import { Controller, FieldValues, RegisterOptions } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import './app-handled-date-picker.scss';
 
 /**
  * A date picker component with advanced form handling, validation, and translation support.
@@ -41,7 +40,7 @@ import './app-handled-date-picker.scss';
  * @returns {ReactElement} The handled date picker component, fully integrated with `react-hook-form` and NextUI's DatePicker.
  */
 
-interface IAppHandledDatePicker {
+interface IAppHandledTimePicker {
   name: string;
   control: any;
   rules?: Omit<
@@ -63,7 +62,7 @@ interface IAppHandledDatePicker {
   showMonthAndYearPickers?: boolean;
 }
 
-function AppHandledDatePicker({
+function AppHandledTimePicker({
   name,
   control,
   rules,
@@ -75,7 +74,7 @@ function AppHandledDatePicker({
   size,
   label,
   showMonthAndYearPickers = false
-}: IAppHandledDatePicker): ReactElement {
+}: IAppHandledTimePicker): ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -84,11 +83,12 @@ function AppHandledDatePicker({
       control={control}
       rules={rules}
       render={({ field: { onChange, value } }) => (
-        <DatePicker
+        <TimeInput
           required={required}
           label={label}
           size={size}
           value={value}
+          hourCycle={24}
           isInvalid={isInvalid}
           onChange={e => {
             onChange(e);
@@ -105,4 +105,4 @@ function AppHandledDatePicker({
   );
 }
 
-export default AppHandledDatePicker;
+export default AppHandledTimePicker;
