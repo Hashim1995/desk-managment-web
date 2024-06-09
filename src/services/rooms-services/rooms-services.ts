@@ -18,7 +18,7 @@ export class RoomsService {
   // eslint-disable-next-line no-use-before-define
   private static instance: RoomsService | null;
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): RoomsService {
     if (!this.instance) {

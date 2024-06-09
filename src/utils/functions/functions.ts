@@ -8,7 +8,6 @@ import { selectOption } from '@/models/common';
 import { IHTTPSParams } from '@/services/adapter-config/config';
 import i18next from 'i18next';
 
-
 let userToken: any = null;
 const storedToken = localStorage.getItem('userToken');
 
@@ -19,7 +18,6 @@ if (storedToken) {
     console.error('Error parsing JSON:', error);
   }
 }
-
 
 /**
  * Converts form data to query parameters.
