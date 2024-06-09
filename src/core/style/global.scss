@@ -1,0 +1,15 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+html {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  // overflow-y: auto;
+}
+* {
+  font-family: 'Poppins', sans-serif;
+}
