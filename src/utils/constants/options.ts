@@ -299,8 +299,8 @@ function createDaysArray(): Array<{ value: string; label: string }> {
  * @returns {Array<{ value: string, label: string }>} The array of days.
  */
 function createYearsArray(
-  startYear = 1940,
-  endYear = 2023
+  startYear = 2010,
+  endYear = 2050
 ): Array<{ value: string; label: string }> {
   const yearsArray = [];
   for (let year = startYear; year <= endYear; year++) {

@@ -5,12 +5,12 @@
 import {
   IDesk,
   IRoomByIdResponse,
-  IRooms,
   IRoomsCreate
 } from '@/modules/home/types';
 import {
   ErrorCallBack,
-  HttpUtil
+  HttpUtil,
+  IHTTPSParams
   // IHTTPSParams
 } from '../adapter-config/config';
 
@@ -18,7 +18,7 @@ export class RoomsService {
   // eslint-disable-next-line no-use-before-define
   private static instance: RoomsService | null;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): RoomsService {
     if (!this.instance) {
@@ -30,16 +30,16 @@ export class RoomsService {
   public async getRoomsList(
     // params: IHTTPSParams[],
     onError?: ErrorCallBack
-  ): Promise<IRooms[]> {
-    const res = await HttpUtil.get('/Rooms', null, false, onError);
+  ): Promise<{ name: string, id: number }[]> {
+    const res = await HttpUtil.get('/Rooms/compact', null, false, onError);
     return res;
   }
 
   public async getRoomById(
-    id: number,
+    params: IHTTPSParams[],
     onError?: ErrorCallBack
   ): Promise<IRoomByIdResponse> {
-    const res = await HttpUtil.get(`/Rooms/${id}`, null, false, onError);
+    const res = await HttpUtil.get(`/Bookings/RoomStatus`, params, false, onError);
     return res;
   }
 
@@ -57,6 +57,15 @@ export class RoomsService {
     const res = await HttpUtil.post('/desks', payload, onError);
     return res;
   }
+
+  public async bookDesk(
+    payload: { deskId: number; startDate: any, endDate: any, },
+    onError?: ErrorCallBack
+  ): Promise<{ id: number }> {
+    const res = await HttpUtil.post('/Bookings', payload, onError);
+    return res;
+  }
+
 
   public async createRoomsMain(
     payload: IRoomsCreate,

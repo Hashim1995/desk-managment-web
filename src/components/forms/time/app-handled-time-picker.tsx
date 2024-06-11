@@ -98,7 +98,7 @@ function AppHandledTimePicker({
           showMonthAndYearPickers={showMonthAndYearPickers}
           errorMessage={isInvalid && t('thisFieldMustEntered')}
           {...selectProps}
-          variant={'flat'}
+          variant={'bordered'}
         />
       )}
     />

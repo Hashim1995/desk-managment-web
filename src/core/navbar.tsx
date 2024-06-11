@@ -2,70 +2,46 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
-import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenu,
-  NavbarMenuItem,
-  Link
-} from '@nextui-org/react';
+import { Link } from '@nextui-org/react';
+import { IoLogOutOutline } from 'react-icons/io5';
+import { RootState } from '@/redux/store';
+import { useSelector } from 'react-redux';
 import { AcmeLogo } from './logo';
 
 export default function AppNavbar() {
-  const menuItems = [
-    'Profile',
-    'Dashboard',
-    'Activity',
-    'Analytics',
-    'System',
-    'Deployments',
-    'My Settings',
-    'Team Settings',
-    'Help & Feedback',
-    'Log Out'
-  ];
+  const { user } = useSelector((state: RootState) => state.user);
 
   return (
-    <Navbar className="z-10 bg-white/30 backdrop-blur-xl">
-      <NavbarContent>
-        <NavbarBrand>
-          <AcmeLogo />
-          <p className="font-bold text-inherit">ACME</p>
-        </NavbarBrand>
-      </NavbarContent>
+    <div className="z-10 flex justify-between items-center gap-5 bg-transparent px-12 py-3 w-full">
+      <div>
+        <AcmeLogo />
+        <p className="font-bold text-inherit">ACME</p>
+      </div>
 
-      <NavbarContent className="gap-4" justify="center">
-        <NavbarItem isActive>
+      <div className="flex justify-center gap-4">
+        <div>
           <Link href="/">Booking</Link>
-        </NavbarItem>
-      </NavbarContent>
-      <NavbarContent justify="end">
-        <NavbarItem className="flex">
-          <Link href="/sign-in">Login</Link>
-        </NavbarItem>
-      </NavbarContent>
-      <NavbarMenu>
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
-            <Link
-              color={
-                index === 2
-                  ? 'primary'
-                  : index === menuItems.length - 1
-                  ? 'danger'
-                  : 'foreground'
-              }
-              className="w-full"
-              href="#"
-              size="lg"
-            >
-              {item}
-            </Link>
-          </NavbarMenuItem>
-        ))}
-      </NavbarMenu>
-    </Navbar>
+        </div>
+      </div>
+      <div className="justify-center">
+        {user?.id ? (
+          <div className="flex items-center gap-2">
+            <p>{user?.fullName}</p>
+            <IoLogOutOutline
+              className="text-default-900 dark:text-white cursor-pointer"
+              size={20}
+              onClick={() => {
+                localStorage.removeItem('userToken');
+                window.location.reload();
+              }}
+            />
+          </div>
+        ) : (
+          <div className="flex">
+            <Link href="/sign-in">LogOut</Link>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

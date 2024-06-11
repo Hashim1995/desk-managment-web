@@ -1,42 +1,43 @@
+/* eslint-disable no-shadow */
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { RangeCalendar, TimeInput, TimeInputValue } from '@nextui-org/react';
+import type { DateValue } from '@react-types/calendar';
+import type { RangeValue } from '@react-types/shared';
 import {
-  Button,
-  Card,
-  Divider,
-  DatePicker,
-  Input,
-  CardBody,
-  DateValue
-} from '@nextui-org/react';
-import { format, addDays } from 'date-fns';
-import { parseDate } from '@internationalized/date';
-import AppHandledDatePicker from '@/components/forms/date/app-handled-date-picker';
-import { selectPlaceholderText } from '@/utils/constants/texts';
-import { t } from 'i18next';
-import AppHandledTimePicker from '@/components/forms/time/app-handled-time-picker';
-import AppHandledSelect from '@/components/forms/select/handled-select';
+  today,
+  parseAbsoluteToLocal,
+  getLocalTimeZone
+} from '@internationalized/date';
+
+import AppHandledBorderedButton from '@/components/forms/button/app-handled-bordered-button';
 
 interface FormValues {
-  startDate: string;
-  startTime: string;
-  endDate: string;
-  endTime: string;
-  room: any;
+  startDate: any;
+  startTime: any;
+  endDate: any;
+  endTime: any;
 }
 
 function DateList(): React.ReactElement {
-  const generateDates = (): string[] => {
-    const today = new Date();
-    return Array.from({ length: 7 }, (_, i) =>
-      format(addDays(today, i), 'EEE dd.MM')
-    );
+  const [date, setDate] = useState<RangeValue<DateValue>>({
+    start: today(getLocalTimeZone()),
+    end: today(getLocalTimeZone()).add({ days: 1 })
+  });
+  const getCurrentTime = () => new Date().toISOString();
+  const getEndTime = (startTime: string) => {
+    const endTime = new Date(startTime);
+    endTime.setHours(endTime.getHours() + 5);
+    return endTime.toISOString();
   };
 
-  const dates = generateDates();
-  const [selectedDate, setSelectedDate] = useState<string>(dates[0]);
-
+  const [startTime, setStartTime] = useState<TimeInputValue>(
+    parseAbsoluteToLocal(getCurrentTime())
+  );
+  const [endTime, setEndTime] = useState<TimeInputValue>(
+    parseAbsoluteToLocal(getEndTime(getCurrentTime()))
+  );
   const {
     control,
     handleSubmit,
@@ -51,104 +52,43 @@ function DateList(): React.ReactElement {
 
   return (
     <div className="flex flex-col items-center p-4">
-      <div className="flex flex-wrap justify-center gap-3 mb-4 w-full">
-        {dates.map(date => (
-          <Button
-            key={date}
-            color={selectedDate === date ? 'primary' : 'default'}
-            onClick={() => setSelectedDate(date)}
-            className="text-xs sm:text-base"
-          >
-            {date}
-          </Button>
-        ))}
-      </div>
-
-      <Divider className="my-4 w-full" />
-
+      {/* <Divider className="my-4 w-full" /> */}
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col items-center gap-4 mt-4 w-full"
       >
-        <AppHandledSelect
-          className="w-80"
-          isInvalid={Boolean(errors.room?.message)}
-          // selectProps={{
-          //   id: 'room',
-          //   isLoading: !roomInformationList?.data,
-          //   isDisabled: !roomInformationList?.data
-          // }}
-          name="room"
-          options={[]}
-          label={selectPlaceholderText(t('room'))}
-          control={control}
-          errors={errors}
-        />
-        <div className="flex sm:flex-row flex-col gap-4 mb-4 w-full">
-          <div className="border-gray-300 sm:pr-4 sm:border-r w-full sm:w-1/2">
-            <div className="mb-4 w-full">
-              <AppHandledDatePicker
-                variant="flat"
-                name="startDate"
-                selectProps={{
-                  id: 'startDate'
-                }}
-                control={control}
-                label={selectPlaceholderText(t('startDate'))}
-                className="app-select text-base sm:text-xl"
-                errors={errors}
-              />
-            </div>
-            <div className="w-full">
-              <AppHandledTimePicker
-                name="startTime"
-                variant="flat"
-                selectProps={{
-                  id: 'startTime'
-                }}
-                control={control}
-                label={selectPlaceholderText(t('startTime'))}
-                className="app-select text-base sm:text-xl"
-                errors={errors}
-              />
-            </div>
-          </div>
-          <div className="sm:pl-4 w-full sm:w-1/2">
-            <div className="mb-4 w-full">
-              <AppHandledDatePicker
-                variant="flat"
-                name="endDate"
-                selectProps={{
-                  id: 'endDate'
-                }}
-                control={control}
-                label={selectPlaceholderText(t('endDate'))}
-                className="app-select text-base sm:text-xl"
-                errors={errors}
-              />
-            </div>
-            <div className="w-full">
-              <AppHandledTimePicker
-                name="endtime"
-                variant="flat"
-                selectProps={{
-                  id: 'endtime'
-                }}
-                control={control}
-                label={selectPlaceholderText(t('endtime'))}
-                className="app-select text-base sm:text-xl"
-                errors={errors}
-              />
-            </div>
-          </div>
+        <div className="flex sm:flex-row flex-col justify-center items-center gap-4 mb-4 w-full">
+          <RangeCalendar
+            aria-label="Date (Controlled)"
+            value={date}
+            onChange={setDate}
+            color="warning"
+            visibleMonths={1}
+            bottomContent={
+              <div className="flex justify-between items-center gap-2 p-3 w-full">
+                <TimeInput
+                  hourCycle={24}
+                  hideTimeZone
+                  label="Start Time"
+                  value={startTime}
+                  onChange={setStartTime}
+                />
+                <TimeInput
+                  hourCycle={24}
+                  hideTimeZone
+                  label="End Time"
+                  value={endTime}
+                  onChange={setEndTime}
+                />
+              </div>
+            }
+            calendarWidth={900}
+          />
         </div>
         <div className="flex justify-center mt-2 w-full">
-          <Button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-600 shadow px-6 py-2 rounded-md text-white"
-          >
+          <AppHandledBorderedButton size="lg" radius="none" type="submit">
             Submit
-          </Button>
+          </AppHandledBorderedButton>
         </div>
       </form>
     </div>

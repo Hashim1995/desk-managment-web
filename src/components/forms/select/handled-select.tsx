@@ -105,7 +105,7 @@ function AppHandledSelect({
           className={className}
           errorMessage={isInvalid && t('thisFieldMustEntered')}
           {...selectProps}
-          variant="flat"
+          variant="bordered"
         >
           {options?.map(z => (
             <SelectItem

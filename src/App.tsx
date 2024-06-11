@@ -7,6 +7,7 @@ import { Spinner } from '@nextui-org/react';
 import useDarkMode from 'use-dark-mode';
 import { fetchUserData } from './redux/auth/auth-slice';
 import { AppDispatch } from './redux/store';
+import 'animate.css';
 
 function App() {
   const router = useRoutes(routesList);
@@ -37,11 +38,7 @@ function App() {
   const darkMode = useDarkMode(false);
 
   return (
-    <main
-      className={
-        'bg-gradient-to-r from-rose-100 to-teal-100 min-h-[100px] h-[1000px] overflow-y-auto'
-      }
-    >
+    <main className={'dark gradient-bg '}>
       <Suspense fallback={<Spinner />}>{router}</Suspense>
     </main>
   );

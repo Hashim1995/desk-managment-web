@@ -7,11 +7,17 @@ function MainLayout() {
   return (
     <div className="h-full">
       <AppNavbar />
-      <main className="flex-grow p-10">
+      <main className="flex-grow my-10 px-10">
         <Outlet />
       </main>
-      <footer className="bg-gray-800 p-4 text-center text-white">
-        &copy; {new Date().getFullYear()} Your Brand. All rights reserved.
+      <footer className="z-10 flex justify-between items-center gap-5 bg-transparent px-12 py-3 w-full">
+        <div>
+          <p className="font-bold text-inherit">ACME</p>
+        </div>
+
+        <div className="flex justify-center gap-4">
+          <div>Copyright</div>
+        </div>
       </footer>
     </div>
   );

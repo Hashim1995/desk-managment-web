@@ -5,10 +5,14 @@ interface IDesk {
   positionX: number;
   positionY: number;
   ownerId: number;
+  ownerName: number;
   width?: string;
   height?: string;
   opacity?: number;
   isCircle?: boolean;
+  isBookedByMe: boolean;
+  bookings: [];
+  releases: [];
   backgroundColor?: string;
 }
 

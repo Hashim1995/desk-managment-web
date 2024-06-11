@@ -2,14 +2,15 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-html {
-  overflow: hidden;
-}
-
 body {
   margin: 0;
-  // overflow-y: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 * {
   font-family: 'Poppins', sans-serif;
+}
+.gradient-bg {
+  background-image: url('../../assets/images//main-bg.webp');
+  background-size: 86.125rem;
 }

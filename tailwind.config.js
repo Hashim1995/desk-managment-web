@@ -9,31 +9,20 @@ export default {
     './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}'
   ],
 
-  // theme: {
-  //   fontSize: {
-  //     xs: '8px',
-  //     sm: '12px',
-  //     base: '14px',
-  //     xl: '16px',
-  //     '2xl': '18px',
-  //     '3xl': '20px'
-  //   },
-  //   extend: {
-  //     animation: {
-  //       border: 'border 4s ease infinite'
-  //     },
-  //     keyframes: {
-  //       border: {
-  //         '0%, 100%': { backgroundPosition: '0% 50%' },
-  //         '50%': { backgroundPosition: '100% 50%' }
-  //       }
-  //     }
-  //   }
-  // },
+  theme: {
+    extend: {
+      backgroundImage: {
+        'custom-gradient':
+          'linear-gradient(307deg, #FF3CAC 0%, #58129c 50%, #010203 100%)'
+      }
+    }
+  },
   darkMode: 'class',
   plugins: [
     require('@tailwindcss/line-clamp'),
     nextui({
+      defaultTheme: 'dark'
+
       // themes: {
       //   light: {
       //     colors: {
@@ -50,7 +39,7 @@ export default {
       //     }
       //   }
       // },
-      addCommonColors: true
+      // addCommonColors: true
       // defaultTheme: 'light',
 
       // themes: {

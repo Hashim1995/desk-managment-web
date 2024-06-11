@@ -52,14 +52,7 @@ function SignIn() {
   return (
     <section className="flex flex-col h-auto">
       <div className="mx-auto px-4 sm:px-6 max-w-6xl">
-        <div className="pt-32 md:pt-40 pb-12 md:pb-20">
-          {/* Page header */}
-          <div className="mx-auto pb-12 md:pb-20 max-w-3xl text-center">
-            <h1 className="h1">
-              Welcome back. We exist to make entrepreneurism easier.
-            </h1>
-          </div>
-
+        <div className="pt-32 md:pt-24 pb-12 md:pb-20">
           {/* Form */}
           <div className="mx-auto max-w-sm">
             <form
