@@ -354,7 +354,7 @@ export default function Home() {
                 </div>
               </div>
             ) : (
-              <Spinner size="lg" />
+              <Spinner className="h-48 min-h-screen" size="lg" />
             )}
           </Tab>
         ))}
