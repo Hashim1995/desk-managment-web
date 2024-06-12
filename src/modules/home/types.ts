@@ -7,6 +7,9 @@ interface IDeskBookings {
   startDate: any;
 }
 
+
+
+
 interface IDesk {
   deskId?: number;
   clientId: string;
@@ -24,7 +27,16 @@ interface IDesk {
   releases: [];
   backgroundColor?: string;
 }
-
+interface IOwnedDesks extends Omit<IDesk, 'ownerName' | 'bookings' | 'releases'> {
+  ownerName: string;
+  roomId: number;
+  roomName: string;
+  ownerPhotoFileId: number | null;
+  createdAt: string;
+  createdBy: number;
+  isActive: boolean;
+  isBookingAllowedByOwner: boolean;
+}
 interface IRooms {
   roomId: number;
   name: string;
@@ -43,4 +55,4 @@ interface IRoomsCreate extends Pick<IRooms, 'name' | 'photoFileId'> {
   password: string;
 }
 
-export type { IRooms, IRoomsCreate, IDeskBookings, IDesk, IRoomByIdResponse };
+export type { IRooms, IRoomsCreate, IOwnedDesks, IDeskBookings, IDesk, IRoomByIdResponse };
