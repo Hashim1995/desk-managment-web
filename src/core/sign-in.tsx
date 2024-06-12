@@ -54,7 +54,7 @@ function SignIn() {
       <div className="mx-auto px-4 sm:px-6 max-w-6xl">
         <div className="pt-32 md:pt-24 pb-12 md:pb-20">
           {/* Form */}
-          <div className="mx-auto max-w-sm">
+          <div className="mx-auto w-full max-w-sm">
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col space-y-5"
@@ -70,7 +70,7 @@ function SignIn() {
                   isInvalid={Boolean(errors.emailOrPhone?.message)}
                   errors={errors}
                   size="sm"
-                  className="w-96"
+                  className="w-full md:w-96"
                   rules={{
                     required: {
                       value: true,
@@ -115,7 +115,7 @@ function SignIn() {
                   isInvalid={Boolean(errors.password?.message)}
                   errors={errors}
                   size="sm"
-                  className="w-96"
+                  className="w-full md:w-96"
                   rules={{
                     required: {
                       value: true,

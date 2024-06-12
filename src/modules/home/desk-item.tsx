@@ -60,6 +60,8 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
                   </h4>
                 </div>
               </div>
+            ) : desk?.ownerId && !desk?.bookings?.length ? (
+              `Assigned to ${desk?.ownerName}`
             ) : (
               'No Booking'
             )}
@@ -95,7 +97,10 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
       <div
         aria-hidden
         onClick={() => {
-          if (!desk?.isBookedByMe && desk?.bookings?.length) {
+          if (
+            (!desk?.isBookedByMe && desk?.bookings?.length) ||
+            desk?.ownerId
+          ) {
             return;
           }
           desk?.clientId === selectedDesk?.clientId
@@ -108,9 +113,11 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
         <BsInfoCircleFill
           color={
             desk?.isBookedByMe
-              ? 'orange'
+              ? 'blue'
               : !desk?.isBookedByMe && desk?.bookings?.length
               ? 'red'
+              : desk?.ownerId && !desk?.bookings?.length
+              ? 'orange'
               : 'white'
           }
           size={25}
