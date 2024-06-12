@@ -35,12 +35,12 @@ function DeleteMultiBookingModal({
           {onClose => (
             <>
               <ModalHeader className="flex flex-col gap-1 pr-10 text-default-800 dark:text-white">
-                Jane Doe
+                Delete
               </ModalHeader>
               <Divider className="mb-6" />
 
               <ModalBody className="text-default-800 dark:text-white">
-                Test
+                Delete booking
               </ModalBody>
               <ModalFooter>
                 <AppHandledBorderedButton

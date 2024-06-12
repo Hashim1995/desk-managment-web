@@ -98,7 +98,7 @@ export default function Home() {
     onOpenChange: deleteMultiBookingOnOpenChange
   } = useDisclosure();
 
-  const [date, setDate] = useState<DateValue>();
+  const [filterDate, setFilterDate] = useState<DateValue>();
   const [selectedDate, setSelectedDate] = useState<ZonedDateTime>(
     generateDates()[0]
   );
@@ -189,7 +189,7 @@ export default function Home() {
       newDate.second,
       newDate.millisecond
     );
-    setDate(newDate);
+    setFilterDate(newDate);
     setSelectedDate(zonedDate);
   };
 
@@ -265,7 +265,7 @@ export default function Home() {
                     </ButtonGroup>
                     <DatePicker
                       onChange={handleDateChange}
-                      value={date}
+                      value={filterDate}
                       className="max-w-[184px]"
                     />
                   </div>

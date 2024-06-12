@@ -30,18 +30,24 @@ export default function AppNavbar() {
         <div className="flex justify-center gap-4">
           {user?.id ? (
             <ButtonGroup>
-              <Button variant="light">
-                <Link className="dark:text-white" to="/">
-                  Booking
-                </Link>
+              <Button
+                as={Link}
+                to="/"
+                className="dark:text-white"
+                variant="light"
+              >
+                Booking
               </Button>
-              <Button variant="light">
-                <Link className="dark:text-white" to="/reports">
-                  Reports
-                </Link>
+              <Button
+                as={Link}
+                to="/reports"
+                className="dark:text-white"
+                variant="light"
+              >
+                Reports
               </Button>
               <Button variant="light" onClick={onOpen}>
-                My assigned desks
+                Settings
               </Button>
             </ButtonGroup>
           ) : (
