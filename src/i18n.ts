@@ -11,8 +11,7 @@ import enJSON from './translations/en.json';
  *
  * @type {string}
  */
-const currentLayoutLanguage: string =
-  localStorage.getItem('currentLayoutLanguage') || 'az'; // Default to 'az' if not found
+const currentLayoutLanguage = 'en'; // Default to 'az' if not found
 
 i18n.use(initReactI18next).init({
   resources: {

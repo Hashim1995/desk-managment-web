@@ -232,9 +232,7 @@
     "my": "My",
     "tariff": "Tariff",
     "deleteConfirmationPrompt": "Are you sure you want to delete the data?",
-    "welcomeMessage": "Welcome! Our AI startup Assistan is here to simplify your daily life. With our efficient and innovative technology, you can find instant answers to every question. You will always find innovations and differences on our platform. Log in and start your journey in the world of Ablarva!",
     "privacyPolicySentence": "Privacy and confidentiality policy",
-    "questionAnswerAiZadeh": "Have a question? Our esteemed Assistan is ready to answer! 😊",
     "suggestionsAndComments": "Let us know your suggestions and comments",
     "instructionBTN": "Instruction",
     "instructionFooterText": "Instruction",
@@ -286,8 +284,6 @@
       "A good friend is a valuable treasure 💎",
       "Time is more valuable than gold ⌛"
     ],
-    "aiZadeSay": "Assistan says",
-    "aiZadeToYou": "Assistan to you",
     "yourEmailApprovedSuccessfully": "Your email address was successfully verified",
     "yourPasswordChangedSuccessfully": "Your password was successfully changed",
     "youRegisteredSuccessfullyPleaseLogin": "You have registered successfully. Please log in again",

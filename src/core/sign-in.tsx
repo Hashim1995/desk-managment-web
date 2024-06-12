@@ -125,7 +125,7 @@ function SignIn() {
                   label={inputPlaceholderText(t('password'))}
                   required
                 />
-                <div className="flex flex-col space-y-5">
+                {/* <div className="flex flex-col space-y-5">
                   <span className="flex justify-start items-center">
                     <span
                       aria-hidden
@@ -140,7 +140,7 @@ function SignIn() {
                       </span>
                     </span>
                   </span>
-                </div>
+                </div> */}
               </div>
               <AppHandledSolidButton
                 aria-label="Submit Login Form"

@@ -1,12 +1,16 @@
+/* eslint-disable react/jsx-no-useless-fragment */
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
-import { Button, Link, useDisclosure, User } from '@nextui-org/react';
+import { Button, ButtonGroup, useDisclosure, User } from '@nextui-org/react';
 import { IoLogOutOutline } from 'react-icons/io5';
 import { RootState } from '@/redux/store';
 import { t } from 'i18next';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom'; // Import from react-router-dom
+
 import { BsTable } from 'react-icons/bs';
 import { AcmeLogo } from './logo';
 import MyDesksModal from './my-desks-modal';
@@ -24,16 +28,29 @@ export default function AppNavbar() {
         </div>
 
         <div className="flex justify-center gap-4">
-          <div>
-            <Link href="/">Booking</Link>
-          </div>
-        </div>
-        <div className="justify-center">
           {user?.id ? (
-            <div className="flex items-center gap-2">
-              <Button onClick={onOpen} color="primary" endContent={<BsTable />}>
+            <ButtonGroup>
+              <Button variant="light">
+                <Link className="dark:text-white" to="/">
+                  Booking
+                </Link>
+              </Button>
+              <Button variant="light">
+                <Link className="dark:text-white" to="/reports">
+                  Reports
+                </Link>
+              </Button>
+              <Button variant="light" onClick={onOpen}>
                 My assigned desks
               </Button>
+            </ButtonGroup>
+          ) : (
+            <></>
+          )}
+        </div>
+        <div className="flex justify-center">
+          {user?.id ? (
+            <div className="flex items-center gap-2">
               <User
                 name={user ? `${user.firstName} ${user.lastName}` : t('empty')}
                 description={user.email || t('empty')}
@@ -57,7 +74,7 @@ export default function AppNavbar() {
             </div>
           ) : (
             <div className="flex">
-              <Link href="/sign-in">LogOut</Link>
+              <Link to="/sign-in">Sign in</Link>
             </div>
           )}
         </div>

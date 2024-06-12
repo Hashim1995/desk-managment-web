@@ -8,7 +8,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 const coreSlice = createSlice({
   name: 'core',
   initialState: {
-    currentLayoutLanguage: LayoutLanguage.Azerbaijani // Corrected the property name here
+    currentLayoutLanguage: LayoutLanguage.English // Corrected the property name here
   },
   reducers: {
     setCurrentLayoutLanguage: (

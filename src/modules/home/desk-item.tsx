@@ -45,6 +45,10 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
           shadow="none"
           className="bg-transparent border-none max-w-[300px]"
         >
+          <div className="flex gap-3 px-3 py-1">
+            <p className="font-semibold text-default-600 text-small">Desk:</p>
+            <p className="text-default-500 text-small">{desk?.name}</p>
+          </div>
           <CardHeader className="justify-between">
             {desk?.bookings?.length ? (
               <div className="flex gap-3">

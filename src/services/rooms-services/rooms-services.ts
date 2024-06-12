@@ -8,6 +8,7 @@ import {
   IRoomByIdResponse,
   IRoomsCreate
 } from '@/modules/home/types';
+import { IBookingReportsResponse } from '@/modules/reports/types';
 import {
   ErrorCallBack,
   HttpUtil,
@@ -19,7 +20,7 @@ export class RoomsService {
   // eslint-disable-next-line no-use-before-define
   private static instance: RoomsService | null;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): RoomsService {
     if (!this.instance) {
@@ -35,6 +36,15 @@ export class RoomsService {
     const res = await HttpUtil.get('/Rooms/compact', null, false, onError);
     return res;
   }
+
+  public async getReportsList(
+    params: IHTTPSParams[],
+    onError?: ErrorCallBack
+  ): Promise<IBookingReportsResponse> {
+    const res = await HttpUtil.get('/Bookings', params, false, onError);
+    return res;
+  }
+
 
   public async getMyDesks(
     // params: IHTTPSParams[],

@@ -21,9 +21,7 @@ function App() {
   useEffect(() => {
     const mode = import.meta.env.VITE_APP_MODE; // 'development' or 'production'
     document.title =
-      mode === 'development'
-        ? '(Dev) Desk managment web'
-        : 'Desk managment web';
+      mode === 'development' ? '(Dev) Desk booking' : 'Desk booking';
 
     if (!userToken?.token) {
       console.log(location?.pathname);
@@ -38,8 +36,16 @@ function App() {
   const darkMode = useDarkMode(false);
 
   return (
-    <main className={'dark gradient-bg '}>
-      <Suspense fallback={<Spinner />}>{router}</Suspense>
+    <main className={'dark gradient-bg min-h-screen '}>
+      <Suspense
+        fallback={
+          <div className="min-h-screen">
+            <Spinner className="absolute inset-0" />
+          </div>
+        }
+      >
+        {router}
+      </Suspense>
     </main>
   );
 }

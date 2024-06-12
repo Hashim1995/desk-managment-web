@@ -3,11 +3,10 @@ import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './auth/auth-slice';
 import coreReducer from './core/core-slice';
 
-// Define the initial layout language based on the value stored in localStorage, or use Azerbaijani as the default
 const savedLayoutLanguage = localStorage.getItem('currentLayoutLanguage');
 const initialLayoutLanguage = savedLayoutLanguage
   ? (savedLayoutLanguage as LayoutLanguage)
-  : LayoutLanguage.Azerbaijani;
+  : LayoutLanguage.English;
 
 // Create the preloaded state object with the initial layout language
 const preloadedState = {

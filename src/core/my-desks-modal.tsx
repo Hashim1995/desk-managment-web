@@ -83,7 +83,7 @@ function MyDesksModal({ isOpen, onOpenChange }: IMyDesksModal) {
                           </div>
                           <div className="flex justify-between items-center gap-1">
                             <p className="w-1/2">Desk name:</p>
-                            <p className="w-1/2">{z?.deskId}</p>
+                            <p className="w-1/2">{z?.name}</p>
                           </div>
                           <div className="flex justify-between items-center gap-1 mt-2">
                             <p className="w-1/2">Auto book:</p>
