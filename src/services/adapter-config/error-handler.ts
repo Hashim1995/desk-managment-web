@@ -12,7 +12,7 @@ import { toastOptions } from '@/configs/global-configs';
 export class ErrorHandler {
   private static instance: ErrorHandler | null;
 
-  private constructor() {}
+  private constructor() { }
 
   /**
    * Gets the singleton instance of the ErrorHandler class.
@@ -29,10 +29,11 @@ export class ErrorHandler {
    * Displays an error message.
    * @param messageText - The error message to display. It can be a string or an array of strings.
    */
-  public showError(messageText: string | string[]): void {
+  public showError(messageText: any): void {
+    console.log(messageText);
     if (Array.isArray(messageText)) {
-      messageText.map((z: string) => {
-        toast.error(z, toastOptions);
+      messageText.map((z: { code: number, message: string }) => {
+        toast.error(z?.message, toastOptions);
       });
     } else {
       toast.error(messageText, toastOptions);

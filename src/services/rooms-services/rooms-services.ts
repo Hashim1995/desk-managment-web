@@ -2,11 +2,7 @@
 /* eslint-disable no-useless-constructor */
 /* eslint-disable class-methods-use-this */
 
-import {
-  IDesk,
-  IRoomByIdResponse,
-  IRoomsCreate
-} from '@/modules/home/types';
+import { IDesk, IRoomByIdResponse, IRoomsCreate } from '@/modules/home/types';
 import {
   ErrorCallBack,
   HttpUtil,
@@ -30,7 +26,7 @@ export class RoomsService {
   public async getRoomsList(
     // params: IHTTPSParams[],
     onError?: ErrorCallBack
-  ): Promise<{ name: string, id: number }[]> {
+  ): Promise<{ name: string; id: number }[]> {
     const res = await HttpUtil.get('/Rooms/compact', null, false, onError);
     return res;
   }
@@ -39,7 +35,12 @@ export class RoomsService {
     params: IHTTPSParams[],
     onError?: ErrorCallBack
   ): Promise<IRoomByIdResponse> {
-    const res = await HttpUtil.get(`/Bookings/RoomStatus`, params, false, onError);
+    const res = await HttpUtil.get(
+      `/Bookings/RoomStatus`,
+      params,
+      false,
+      onError
+    );
     return res;
   }
 
@@ -59,13 +60,12 @@ export class RoomsService {
   }
 
   public async bookDesk(
-    payload: { deskId: number; startDate: any, endDate: any, },
+    payload: { deskId: number; startDate: any; endDate: any },
     onError?: ErrorCallBack
   ): Promise<{ id: number }> {
     const res = await HttpUtil.post('/Bookings', payload, onError);
     return res;
   }
-
 
   public async createRoomsMain(
     payload: IRoomsCreate,
@@ -80,6 +80,11 @@ export class RoomsService {
     onError?: ErrorCallBack
   ): Promise<{ id: number }> {
     const res = await HttpUtil.put('/Users', payload, onError);
+    return res;
+  }
+
+  public async cancelDesk(id: number, onError?: ErrorCallBack): Promise<any> {
+    const res = await HttpUtil.delete(`Bookings/${id}`, onError);
     return res;
   }
 

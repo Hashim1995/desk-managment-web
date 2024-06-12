@@ -23,8 +23,7 @@ import {
   RangeCalendar,
   TimeInputValue,
   DateInput,
-  useDisclosure,
-  ButtonGroup
+  useDisclosure
 } from '@nextui-org/react';
 import { RoomsService } from '@/services/rooms-services/rooms-services';
 import AppHandledBorderedButton from '@/components/forms/button/app-handled-bordered-button';
@@ -60,35 +59,15 @@ const getEndOfDay = (zonedDateTime: ZonedDateTime): ZonedDateTime => {
 };
 
 const getCurrentTime = () => new Date().toISOString();
-
 const getEndTime = (startTime: string) => {
   const endTime = new Date(startTime);
   endTime.setHours(endTime.getHours() + 5);
   return endTime.toISOString();
 };
-const convertToISO8601 = (date: string, time: TimeInputValue): string => {
-  const dateTimeString = `${date}T${time.hour}:${time.minute}:${time.second}`;
-  const dateObj = new Date(dateTimeString);
-
-  // Adjust the timezone offset
-  const tzOffset = dateObj.getTimezoneOffset() * 60000;
-  const localISOTime = new Date(dateObj.getTime() - tzOffset).toISOString();
-
-  return localISOTime;
-};
-
-const formatToLocalISO8601 = (date: Date): string => {
-  const tzOffset = -date.getTimezoneOffset();
-  const diff = tzOffset >= 0 ? '+' : '-';
-  const pad = (num: number) => (num < 10 ? '0' : '') + num;
-
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
-    date.getDate()
-  )}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(
-    date.getSeconds()
-  )}${diff}${pad(Math.floor(Math.abs(tzOffset) / 60))}:${pad(
-    Math.abs(tzOffset) % 60
-  )}`;
+const convertToISO8601 = (date: string, time: TimeInputValue) => {
+  const dateTime = `${date}T${time.toString().split('T')[1].split('+')[0]}`;
+  const utcDateTime = new Date(dateTime).toISOString();
+  return utcDateTime;
 };
 
 export default function Home() {
@@ -121,7 +100,11 @@ export default function Home() {
   const [roomList, setRoomList] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState<number>();
   const [selectedDesk, setSelectedDesk] = useState<IDesk>();
-  const [photoUrl, setPhotoUrl] = useState<string>('');
+  const [photoUrl, setPhotoUrl] = useState<{
+    url: string;
+    width: number;
+    height: number;
+  }>();
 
   const fetchTokenizedImage = async (id: string) => {
     try {
@@ -129,8 +112,16 @@ export default function Home() {
         url: '',
         fileUrl: `${import.meta.env.VITE_BASE_URL}Files/${id}`
       });
+      const img = new Image();
+      img.src = tokenizedFile?.url;
 
-      setPhotoUrl(tokenizedFile?.url || '');
+      img.onload = function () {
+        setPhotoUrl({
+          url: tokenizedFile?.url,
+          width: img.width,
+          height: img.height
+        });
+      };
     } catch (err) {
       console.log(err);
     }
@@ -194,8 +185,6 @@ export default function Home() {
   };
 
   async function bookDesk() {
-    console.log(submitDate?.start?.toString(), 'test1');
-    console.log(startTime, 'test2');
     setbtnLoading(true);
     const startDate = convertToISO8601(
       submitDate?.start?.toString(),
@@ -206,8 +195,8 @@ export default function Home() {
     try {
       const res = await RoomsService.getInstance().bookDesk({
         deskId: selectedDesk?.deskId,
-        startDate, // Pass Date object directly
-        endDate // Pass Date object directly
+        startDate,
+        endDate
       });
       if (res) {
         setRefreshComponent(z => !z);
@@ -233,9 +222,10 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center p-4">
       <Tabs
         size="lg"
+        fullWidth
         aria-label="Options"
         selectedKey={selectedRoom}
         onSelectionChange={(e: number) => {
@@ -245,43 +235,40 @@ export default function Home() {
         {roomList?.map(z => (
           <Tab key={z?.id} title={z?.name}>
             {!isSubmitting ? (
-              <div className="min-h-screen">
+              <div className="w-full min-h-screen">
                 <div className="flex flex-col items-center p-4">
-                  <div className="flex items-center gap-2">
-                    <ButtonGroup>
-                      {generateDates()?.map((date, index) => (
-                        <Button
-                          key={`${index}`}
-                          color={
-                            selectedDate.day === date.day
-                              ? 'primary'
-                              : 'default'
-                          }
-                          onClick={() => setSelectedDate(date)}
-                        >
-                          {`${date.day}/${date.month}/${date.year}`}
-                        </Button>
-                      ))}
-                      <DatePicker
-                        onChange={handleDateChange}
-                        value={date}
-                        className="max-w-[184px]"
-                      />
-                    </ButtonGroup>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {generateDates()?.map((date, index) => (
+                      <Button
+                        key={`${index}`}
+                        color={
+                          selectedDate.day === date.day ? 'primary' : 'default'
+                        }
+                        onClick={() => setSelectedDate(date)}
+                        className="text-xs sm:text-base"
+                      >
+                        {`${date.day}/${date.month}/${date.year}`}
+                      </Button>
+                    ))}
+                    <DatePicker
+                      onChange={handleDateChange}
+                      value={date}
+                      className="w-full sm:w-auto max-w-[184px]"
+                    />
                   </div>
                 </div>
                 {selectedDesk && (
-                  <div className="flex justify-between items-center gap-4 mt-2 w-full">
+                  <div className="flex sm:flex-row flex-col justify-between items-center gap-4 mt-2 w-full">
                     <DateRangePicker
                       aria-label="Date (Controlled)"
                       value={submitDate}
                       allowsNonContiguousRanges
                       onChange={setSubmitDate}
                       size="lg"
-                      className="max-w-[384px]"
+                      className="w-full max-w-[384px]"
                       visibleMonths={2}
                       CalendarBottomContent={
-                        <div className="flex justify-between items-center gap-2 p-3 w-full">
+                        <div className="flex sm:flex-row flex-col justify-between items-center gap-2 p-3 w-full">
                           <TimeInput
                             hourCycle={24}
                             hideTimeZone
@@ -313,6 +300,7 @@ export default function Home() {
                             cancelDesk();
                           }
                         }}
+                        className="w-full sm:w-auto"
                       >
                         Cancel Desk
                       </AppHandledBorderedButton>
@@ -323,25 +311,24 @@ export default function Home() {
                         radius="none"
                         type="submit"
                         onClick={() => bookDesk()}
+                        className="w-full sm:w-auto"
                       >
                         Submit
                       </AppHandledBorderedButton>
                     )}
                   </div>
                 )}
-                <div className="flex justify-center items-center mt-10">
+                <div className="flex justify-center items-center mt-10 w-full">
                   <div
                     id="canvas"
                     style={{
-                      backgroundRepeat: 'no-repeat'
+                      backgroundRepeat: 'no-repeat',
+                      backgroundImage: `url(${photoUrl?.url})`,
+                      height: photoUrl?.height,
+                      width: photoUrl?.width
                     }}
-                    className="relative bg-gray-100 border w-[1400px] h-[800px] overflow-auto"
+                    className="relative bg-gray-100 border overflow-auto"
                   >
-                    <img
-                      alt=""
-                      src={photoUrl}
-                      className="absolute inset-0 object-contain"
-                    />
                     {deskList.map(desk => (
                       <DeskItem
                         key={desk?.clientId || desk?.deskId}

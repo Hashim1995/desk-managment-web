@@ -8,8 +8,8 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig
 } from 'axios';
-import i18next from 'i18next';
 
+import { t } from 'i18next';
 import { selectOption } from '@/models/common';
 import { HttpError } from './http-error';
 import { ErrorHandler } from './error-handler';
@@ -24,12 +24,13 @@ axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
  */
 const axiosErrorHandler = (error: unknown) => {
   if (error instanceof AxiosError) {
-    if (error?.response?.data?.errors?.length) {
-      return error.response.data.errors;
+    console.log(error.response?.data);
+    if (error?.response?.data?.length) {
+      return error.response.data;
     }
-    return i18next.t('errorOccurred');
+    return t('errorOccurred');
   }
-  return i18next.t('errorOccurred');
+  return t('errorOccurred');
 };
 
 /**

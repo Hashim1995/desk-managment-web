@@ -1,3 +1,12 @@
+interface IDeskBookings {
+  bookedById: number;
+  bookedByName: string;
+  bookingId: number;
+  endDate: any;
+  isBookedByMe: boolean;
+  startDate: any;
+}
+
 interface IDesk {
   deskId?: number;
   clientId: string;
@@ -11,7 +20,7 @@ interface IDesk {
   opacity?: number;
   isCircle?: boolean;
   isBookedByMe: boolean;
-  bookings: [];
+  bookings: IDeskBookings[];
   releases: [];
   backgroundColor?: string;
 }
@@ -34,4 +43,4 @@ interface IRoomsCreate extends Pick<IRooms, 'name' | 'photoFileId'> {
   password: string;
 }
 
-export type { IRooms, IRoomsCreate, IDesk, IRoomByIdResponse };
+export type { IRooms, IRoomsCreate, IDeskBookings, IDesk, IRoomByIdResponse };

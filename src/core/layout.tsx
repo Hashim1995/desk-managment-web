@@ -10,7 +10,7 @@ function MainLayout() {
       <main className="flex-grow my-10 px-10">
         <Outlet />
       </main>
-      <footer className="z-10 flex justify-between items-center gap-5 bg-transparent px-12 py-3 w-full">
+      {/* <footer className="z-10 flex justify-between items-center gap-5 bg-transparent px-12 py-3 w-full">
         <div>
           <p className="font-bold text-inherit">ACME</p>
         </div>
@@ -18,7 +18,7 @@ function MainLayout() {
         <div className="flex justify-center gap-4">
           <div>Copyright</div>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }

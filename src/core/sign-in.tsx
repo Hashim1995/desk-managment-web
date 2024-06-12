@@ -50,7 +50,7 @@ function SignIn() {
     }
   };
   return (
-    <section className="flex flex-col h-auto">
+    <section className="flex flex-col h-auto min-h-screen">
       <div className="mx-auto px-4 sm:px-6 max-w-6xl">
         <div className="pt-32 md:pt-24 pb-12 md:pb-20">
           {/* Form */}
