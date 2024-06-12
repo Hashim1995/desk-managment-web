@@ -91,7 +91,7 @@ function MyDesksModal({ isOpen, onOpenChange }: IMyDesksModal) {
                               <Switch
                                 size="sm"
                                 onChange={() => swtichStatus(z?.deskId)}
-                                defaultSelected={z?.isActive}
+                                defaultSelected={z?.isBookingAllowedByOwner}
                                 aria-label="Automatic updates"
                               />
                             </p>

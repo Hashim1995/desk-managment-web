@@ -63,7 +63,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
             ) : desk?.ownerId && !desk?.bookings?.length ? (
               `Assigned to ${desk?.ownerName}`
             ) : (
-              'No Booking'
+              'No Booking - Available'
             )}
           </CardHeader>
 

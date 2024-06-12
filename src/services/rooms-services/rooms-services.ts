@@ -2,7 +2,12 @@
 /* eslint-disable no-useless-constructor */
 /* eslint-disable class-methods-use-this */
 
-import { IDesk, IOwnedDesks, IRoomByIdResponse, IRoomsCreate } from '@/modules/home/types';
+import {
+  IDesk,
+  IOwnedDesks,
+  IRoomByIdResponse,
+  IRoomsCreate
+} from '@/modules/home/types';
 import {
   ErrorCallBack,
   HttpUtil,
@@ -14,7 +19,7 @@ export class RoomsService {
   // eslint-disable-next-line no-use-before-define
   private static instance: RoomsService | null;
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): RoomsService {
     if (!this.instance) {
@@ -38,7 +43,6 @@ export class RoomsService {
     const res = await HttpUtil.get('/Desks/Owned', null, false, onError);
     return res;
   }
-
 
   public async switchMyDeskStatus(
     id: number,
