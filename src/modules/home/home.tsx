@@ -262,12 +262,12 @@ export default function Home() {
                           {`${date.day}/${date.month}/${date.year}`}
                         </Button>
                       ))}
-                      <DatePicker
-                        onChange={handleDateChange}
-                        value={date}
-                        className="max-w-[184px]"
-                      />
                     </ButtonGroup>
+                    <DatePicker
+                      onChange={handleDateChange}
+                      value={date}
+                      className="max-w-[184px]"
+                    />
                   </div>
                 </div>
                 {selectedDesk && (
