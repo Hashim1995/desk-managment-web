@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-shadow */
 /* eslint-disable no-unused-vars */
@@ -6,7 +7,8 @@ import {
   getLocalTimeZone,
   ZonedDateTime,
   now,
-  parseAbsoluteToLocal
+  parseAbsoluteToLocal,
+  Time
 } from '@internationalized/date';
 import { format, formatISO } from 'date-fns';
 import { useState, useEffect } from 'react';
@@ -59,36 +61,24 @@ const getEndOfDay = (zonedDateTime: ZonedDateTime): ZonedDateTime => {
   );
 };
 
-const getCurrentTime = () => new Date().toISOString();
-
-const getEndTime = (startTime: string) => {
-  const endTime = new Date(startTime);
-  endTime.setHours(endTime.getHours() + 5);
-  return endTime.toISOString();
-};
-const convertToISO8601 = (date: string, time: TimeInputValue): string => {
-  const dateTimeString = `${date}T${time.hour}:${time.minute}:${time.second}`;
-  const dateObj = new Date(dateTimeString);
-
-  // Adjust the timezone offset
-  const tzOffset = dateObj.getTimezoneOffset() * 60000;
-  const localISOTime = new Date(dateObj.getTime() - tzOffset).toISOString();
-
-  return localISOTime;
+const getCurrentTime = (isEnd = false) => {
+  if (isEnd) {
+    const date = new Date();
+    date.setHours(23, 59, 0, 0);
+    return date.toISOString();
+  }
+  return new Date().toISOString();
 };
 
-const formatToLocalISO8601 = (date: Date): string => {
-  const tzOffset = -date.getTimezoneOffset();
-  const diff = tzOffset >= 0 ? '+' : '-';
-  const pad = (num: number) => (num < 10 ? '0' : '') + num;
-
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
-    date.getDate()
-  )}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(
-    date.getSeconds()
-  )}${diff}${pad(Math.floor(Math.abs(tzOffset) / 60))}:${pad(
-    Math.abs(tzOffset) % 60
-  )}`;
+const convertToISO8601 = (
+  dateZoned: string,
+  timeZoned: TimeInputValue
+): string => {
+  const time = timeZoned?.toString();
+  const date = dateZoned?.toString();
+  const formattedTime = time.match(/\d\d:\d\d/)[0];
+  const dateTime = `${date}T${formattedTime}:00`;
+  return dateTime;
 };
 
 export default function Home() {
@@ -106,11 +96,11 @@ export default function Home() {
     parseAbsoluteToLocal(getCurrentTime())
   );
   const [endTime, setEndTime] = useState<TimeInputValue>(
-    parseAbsoluteToLocal(getEndTime(getCurrentTime()))
+    parseAbsoluteToLocal(getCurrentTime(true))
   );
   const [submitDate, setSubmitDate] = useState<RangeValue<DateValue>>({
     start: today(getLocalTimeZone()),
-    end: today(getLocalTimeZone()).add({ days: 1 })
+    end: today(getLocalTimeZone())
   });
   const [refreshComponent, setRefreshComponent] = useState(false);
   const [btnLoading, setbtnLoading] = useState(false);
@@ -194,8 +184,6 @@ export default function Home() {
   };
 
   async function bookDesk() {
-    console.log(submitDate?.start?.toString(), 'test1');
-    console.log(startTime, 'test2');
     setbtnLoading(true);
     const startDate = convertToISO8601(
       submitDate?.start?.toString(),
@@ -278,6 +266,7 @@ export default function Home() {
                       allowsNonContiguousRanges
                       onChange={setSubmitDate}
                       size="lg"
+                      hideTimeZone
                       className="max-w-[384px]"
                       visibleMonths={2}
                       CalendarBottomContent={
