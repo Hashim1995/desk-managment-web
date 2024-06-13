@@ -34,7 +34,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
         ? '#006FEE'
         : !desk?.isBookedByMe && desk?.bookings?.length
         ? '#f31260'
-        : desk?.ownerId && desk?.isBookingAllowedByOwner
+        : desk?.ownerId && !desk?.isBookingAllowedByOwner
         ? '#f31260'
         : desk?.ownerId && !desk?.bookings?.length
         ? '#f5a524'
@@ -76,7 +76,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
                   </h4>
                 </div>
               </div>
-            ) : desk?.ownerId && desk?.isBookingAllowedByOwner ? (
+            ) : desk?.ownerId && !desk?.isBookingAllowedByOwner ? (
               `Reserved for ${desk?.ownerName}`
             ) : desk?.ownerId && !desk?.bookings?.length ? (
               `Assigned to ${desk?.ownerName}`
@@ -120,15 +120,32 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
       <div
         aria-hidden
         onClick={() => {
-          if (
-            (!desk?.isBookedByMe && desk?.bookings?.length) ||
-            desk?.ownerId
-          ) {
+          const isAlreadyBooked =
+            desk?.bookings?.length > 0 && !desk?.isBookedByMe;
+          const isOwnedByMe = desk?.ownerId === user?.id; // user?.id, mevcut kullanıcının ownerId'si
+          const isOwnedByAnother = desk?.ownerId && desk?.ownerId !== user?.id;
+          const isBookingAllowedByOwner = Boolean(
+            desk?.isBookingAllowedByOwner
+          );
+          const isSameDeskSelected = desk?.clientId === selectedDesk?.clientId;
+          // If the desk is already selected, toggle the selection (cancel it)
+          if (isSameDeskSelected) {
+            setSelectedDesk(null);
             return;
           }
-          desk?.clientId === selectedDesk?.clientId
-            ? setSelectedDesk(null)
-            : setSelectedDesk(desk);
+          // If the desk is owned by another person and booking is not allowed, it cannot be selected
+          if (isOwnedByAnother && !isBookingAllowedByOwner) {
+            return;
+          }
+          // If the desk is owned by me, or it is owned by another person but booking is allowed, it can be selected
+          if (isOwnedByMe || (isOwnedByAnother && isBookingAllowedByOwner)) {
+            setSelectedDesk(desk);
+            return;
+          }
+          // If the desk is owned by no one and has not been booked by someone else, it can be selected
+          if (!desk?.ownerId && !isAlreadyBooked) {
+            setSelectedDesk(desk);
+          }
         }}
         style={style}
         className={`absolute animate__animated     cursor-pointer   rounded-full hover:backdrop-blur-xl flex items-center justify-center shadow-md text-white `}

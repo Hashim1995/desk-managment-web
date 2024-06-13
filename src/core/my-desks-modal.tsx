@@ -86,7 +86,7 @@ function MyDesksModal({ isOpen, onOpenChange }: IMyDesksModal) {
                             <p className="w-1/2">{z?.name}</p>
                           </div>
                           <div className="flex justify-between items-center gap-1 mt-2">
-                            <p className="w-1/2">Auto book:</p>
+                            <p className="w-1/2">Allow for book:</p>
                             <p className="w-1/2">
                               <Switch
                                 size="sm"
