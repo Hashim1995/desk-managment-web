@@ -26,7 +26,8 @@ import {
   TimeInputValue,
   DateInput,
   useDisclosure,
-  ButtonGroup
+  ButtonGroup,
+  Chip
 } from '@nextui-org/react';
 import { RoomsService } from '@/services/rooms-services/rooms-services';
 import AppHandledBorderedButton from '@/components/forms/button/app-handled-bordered-button';
@@ -319,7 +320,14 @@ export default function Home() {
                     )}
                   </div>
                 )}
-                <div className="flex justify-center items-center mt-10">
+                <div className="relative flex justify-center items-center mt-10">
+                  <div className="-top-3 z-10 absolute flex gap-2">
+                    <Chip color="primary"> Booked for me</Chip>
+                    <Chip color="secondary">Assigned to me</Chip>
+                    <Chip color="success">Free</Chip>
+                    <Chip color="warning"> Assigned to someone</Chip>
+                    <Chip color="danger">Booked</Chip>
+                  </div>
                   <div
                     id="canvas"
                     style={{

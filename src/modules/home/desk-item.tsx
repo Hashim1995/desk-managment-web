@@ -26,7 +26,16 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
   const { user } = useSelector((state: RootState) => state.user);
 
   const style = {
-    backgroundColor: desk?.backgroundColor,
+    backgroundColor:
+      desk?.ownerId === user?.id
+        ? '#9353d3'
+        : desk?.isBookedByMe
+        ? '#006FEE'
+        : !desk?.isBookedByMe && desk?.bookings?.length
+        ? '#f31260'
+        : desk?.ownerId && !desk?.bookings?.length
+        ? '#f5a524'
+        : '#17c964',
     width: `${desk?.width}px`,
     height: `${desk?.height}px`,
     opacity:
@@ -114,18 +123,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
         style={style}
         className={`absolute animate__animated     cursor-pointer   rounded-full hover:backdrop-blur-xl flex items-center justify-center shadow-md text-white `}
       >
-        <BsInfoCircleFill
-          color={
-            desk?.isBookedByMe
-              ? 'blue'
-              : !desk?.isBookedByMe && desk?.bookings?.length
-              ? 'red'
-              : desk?.ownerId && !desk?.bookings?.length
-              ? 'orange'
-              : 'white'
-          }
-          size={25}
-        />
+        <BsInfoCircleFill color={'white'} size={25} />
         {/* {desk?.isBookedByMe ? (
           <img
             alt=""
