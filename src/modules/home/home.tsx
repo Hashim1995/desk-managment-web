@@ -11,7 +11,7 @@ import {
   Time
 } from '@internationalized/date';
 import { format, formatISO } from 'date-fns';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Tabs,
   Tab,
@@ -220,7 +220,27 @@ export default function Home() {
     }
     setbtnLoading(false);
   }
+  const canvasRef = useRef(null);
 
+  useEffect(() => {
+    const perpx = 1.9 / 1920;
+    const scaleCanvas = () => {
+      if (canvasRef.current) {
+        const screenWidth = window.innerWidth;
+        if (screenWidth < 800) {
+          const ratio = perpx * screenWidth;
+          canvasRef.current.style.transform = `scale(${ratio})`;
+        } else {
+          canvasRef.current.style.transform = 'none';
+        }
+      }
+    };
+    scaleCanvas();
+    window.addEventListener('resize', scaleCanvas);
+
+    // Cleanup the event listener when the component unmounts
+    return () => window.removeEventListener('resize', scaleCanvas);
+  }, []);
   return (
     <div className="flex flex-col justify-center items-center">
       <Tabs
@@ -330,6 +350,7 @@ export default function Home() {
                   </div>
                   <div
                     id="canvas"
+                    ref={canvasRef}
                     style={{
                       backgroundRepeat: 'no-repeat'
                     }}
