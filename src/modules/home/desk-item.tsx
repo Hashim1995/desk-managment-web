@@ -52,7 +52,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
   const style = {
     backgroundColor:
       desk?.ownerId === user?.id
-        ? '#9353d3'
+        ? '#006FEE'
         : desk?.isBookedByMe
         ? '#006FEE'
         : !desk?.isBookedByMe && desk?.bookings?.length
@@ -60,7 +60,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
         : desk?.ownerId && !desk?.isBookingAllowedByOwner
         ? '#f31260'
         : desk?.ownerId && !desk?.bookings?.length
-        ? '#f5a524'
+        ? '#3f3f46'
         : '#17c964',
     width: `${desk?.width}px`,
     height: `${desk?.height}px`,
