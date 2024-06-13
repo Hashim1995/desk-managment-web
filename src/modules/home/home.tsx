@@ -258,6 +258,7 @@ export default function Home() {
                     />
                   </div>
                 </div>
+
                 {selectedDesk && (
                   <div className="flex justify-between items-center gap-4 mt-2 w-full">
                     <DateRangePicker
@@ -324,7 +325,7 @@ export default function Home() {
                     style={{
                       backgroundRepeat: 'no-repeat'
                     }}
-                    className="relative bg-gray-100 border w-[1400px] h-[800px] overflow-auto"
+                    className="relative bg-gray-100 border w-[1000px] h-[1000px] overflow-scroll"
                   >
                     <img
                       alt=""
