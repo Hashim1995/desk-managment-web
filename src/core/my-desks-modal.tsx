@@ -44,6 +44,7 @@ function MyDesksModal({ isOpen, onOpenChange }: IMyDesksModal) {
     try {
       await RoomsService.getInstance().switchMyDeskStatus(id);
       getMyDesks();
+      window?.location?.reload();
     } catch (err) {
       console.log(err);
     }
