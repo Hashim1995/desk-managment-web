@@ -1,6 +1,8 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
 import { RootState } from '@/redux/store';
+import { tokenizeImage } from '@/utils/functions/functions';
 import {
   Avatar,
   Button,
@@ -11,7 +13,7 @@ import {
   Tooltip
 } from '@nextui-org/react';
 import { format, parseISO } from 'date-fns';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { BsInfoCircleFill } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { IDesk } from './types';
@@ -25,6 +27,27 @@ interface DeskItemProps {
 
 function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
   const { user } = useSelector((state: RootState) => state.user);
+  const [photoUrl, setPhotoUrl] = useState<string>('');
+
+  const fetchTokenizedImage = async (id: number) => {
+    try {
+      const tokenizedFile = await tokenizeImage({
+        url: '',
+        fileUrl: `${import.meta.env.VITE_BASE_URL}Files/${id}`
+      });
+
+      setPhotoUrl(tokenizedFile?.url || '');
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    desk?.ownerPhotoFileId &&
+      fetchTokenizedImage(
+        desk?.isBookedByMe ? user?.photoFileId : desk?.ownerPhotoFileId
+      );
+  }, [desk]);
 
   const style = {
     backgroundColor:
@@ -48,7 +71,6 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
     // opacity: `${desk?.opacity}%`,
     transform: `translate3d(${desk.positionX}px, ${desk.positionY}px, 0)`
   };
-  const [isFollowed, setIsFollowed] = useState(false);
 
   return (
     <Tooltip
@@ -64,12 +86,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
           <CardHeader className="justify-between">
             {desk?.bookings?.length ? (
               <div className="flex gap-3">
-                <Avatar
-                  isBordered
-                  radius="full"
-                  size="md"
-                  src="https://i.pravatar.cc/150?u=a04258114e29026702d"
-                />
+                <Avatar isBordered radius="full" size="md" src={photoUrl} />
                 <div className="flex flex-col justify-center items-start">
                   <h4 className="font-semibold text-default-600 text-small leading-none">
                     {desk?.bookings[0]?.bookedByName || '-'} 🎉
@@ -77,9 +94,29 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
                 </div>
               </div>
             ) : desk?.ownerId && !desk?.isBookingAllowedByOwner ? (
-              `Reserved for ${desk?.ownerName}`
+              <div className="flex gap-3">
+                <Avatar isBordered radius="full" size="md" src={photoUrl} />
+                <div className="flex flex-col justify-center items-start">
+                  <h4 className="font-semibold text-default-600 text-small leading-none">
+                    Reserved for {desk?.ownerName || '-'} 🎉
+                  </h4>
+                </div>
+              </div>
             ) : desk?.ownerId && !desk?.bookings?.length ? (
-              `Assigned to ${desk?.ownerName}`
+              <div className="flex gap-3">
+                <Avatar
+                  isBordered
+                  radius="full"
+                  className="object-cover"
+                  size="md"
+                  src={photoUrl}
+                />
+                <div className="flex flex-col justify-center items-start">
+                  <h4 className="font-semibold text-default-600 text-small leading-none">
+                    Assigned for {desk?.ownerName || '-'} 🎉
+                  </h4>
+                </div>
+              </div>
             ) : (
               'No Booking - Available'
             )}

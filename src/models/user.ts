@@ -10,6 +10,7 @@ export interface IAuth {
   nickName: string | null;
   email: string;
   phoneNumber: string | null;
+  photoFileId: number
 }
 
 export interface ILogin {

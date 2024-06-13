@@ -3,7 +3,7 @@
 /* eslint-disable no-shadow */
 /// <reference lib="webworker" />
 
-const CACHE_NAME = 'image-cache-v1';
+const CACHE_NAME = 'imageCache';
 const urlsToCache = [
   // URLs to cache
 ];

@@ -20,6 +20,7 @@ interface IDesk {
   opacity?: number;
   isCircle?: boolean;
   isBookingAllowedByOwner: boolean;
+  ownerPhotoFileId: number | null;
   isBookedByMe: boolean;
   bookings: IDeskBookings[];
   releases: [];

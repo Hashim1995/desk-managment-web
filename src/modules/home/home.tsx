@@ -315,7 +315,7 @@ export default function Home() {
                         type="submit"
                         onClick={() => bookDesk()}
                       >
-                        Submit
+                        Book - {selectedDesk?.name}
                       </AppHandledBorderedButton>
                     )}
                   </div>

@@ -140,14 +140,12 @@ const tokenizeImage = async (file: any): Promise<any> => {
     const objectUrl = URL.createObjectURL(blob);
     newFile.url = objectUrl;
   } else {
-    console.log(src, 'test55');
     const headers = new Headers();
     headers.append('Authorization', `Bearer ${userToken?.token}`);
 
     const response = await fetch(src, {
       headers
     });
-    console.log(response, 'test55');
 
     if (response.ok) {
       const blob = await response.blob();
