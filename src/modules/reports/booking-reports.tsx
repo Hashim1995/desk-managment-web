@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from 'react';
 import Empty from '@/components/layout/empty';
 import { RoomsService } from '@/services/rooms-services/rooms-services';
+import { format, parseISO } from 'date-fns';
 import { IBookingReportsResponse } from './types';
 
 function LeadsTable() {
@@ -47,8 +48,12 @@ function LeadsTable() {
         <TableCell>{item?.deskName || '-'}</TableCell>
         <TableCell>{item?.deskOwnerName || '-'}</TableCell>
         <TableCell>{item?.roomName || '-'}</TableCell>
-        <TableCell>{item?.startDate || '-'}</TableCell>
-        <TableCell>{item?.endDate || '-'}</TableCell>
+        <TableCell>
+          {format(parseISO(item?.startDate), 'dd.MM.yyyy HH:mm') || '-'}
+        </TableCell>
+        <TableCell>
+          {format(parseISO(item?.endDate), 'dd.MM.yyyy HH:mm') || '-'}
+        </TableCell>
       </TableRow>
     ));
 

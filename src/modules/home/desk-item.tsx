@@ -10,6 +10,7 @@ import {
   CardHeader,
   Tooltip
 } from '@nextui-org/react';
+import { format, parseISO } from 'date-fns';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { BsInfoCircleFill } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
@@ -32,6 +33,8 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
         : desk?.isBookedByMe
         ? '#006FEE'
         : !desk?.isBookedByMe && desk?.bookings?.length
+        ? '#f31260'
+        : desk?.ownerId && desk?.isBookingAllowedByOwner
         ? '#f31260'
         : desk?.ownerId && !desk?.bookings?.length
         ? '#f5a524'
@@ -73,6 +76,8 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
                   </h4>
                 </div>
               </div>
+            ) : desk?.ownerId && desk?.isBookingAllowedByOwner ? (
+              `Reserved for ${desk?.ownerName}`
             ) : desk?.ownerId && !desk?.bookings?.length ? (
               `Assigned to ${desk?.ownerName}`
             ) : (
@@ -89,7 +94,10 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
                   </p>
                   <p className="text-default-500 text-small">
                     {' '}
-                    {desk?.bookings[0]?.startDate}
+                    {format(
+                      parseISO(desk?.bookings[0]?.startDate),
+                      'dd.MM.yyyy HH:mm'
+                    )}
                   </p>
                 </div>
                 <div className="flex justify-between">
@@ -97,8 +105,10 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
                     End
                   </p>
                   <p className="text-default-500 text-small">
-                    {' '}
-                    {desk?.bookings[0]?.endDate}
+                    {format(
+                      parseISO(desk?.bookings[0]?.endDate),
+                      'dd.MM.yyyy HH:mm'
+                    )}
                   </p>
                 </div>
               </div>

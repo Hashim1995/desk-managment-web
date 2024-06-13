@@ -19,6 +19,7 @@ interface IDesk {
   height?: string;
   opacity?: number;
   isCircle?: boolean;
+  isBookingAllowedByOwner: boolean,
   isBookedByMe: boolean;
   bookings: IDeskBookings[];
   releases: [];
