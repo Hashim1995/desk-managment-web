@@ -11,7 +11,7 @@ import {
   parseAbsoluteToLocal,
   Time
 } from '@internationalized/date';
-import { format, formatISO } from 'date-fns';
+import { format, formatISO, sub } from 'date-fns';
 import { useState, useEffect, useRef } from 'react';
 import {
   Tabs,
@@ -42,11 +42,11 @@ const generateDates = (): ZonedDateTime[] => {
   return Array.from({ length: 7 }, (_, i) => today.add({ days: i }));
 };
 
-const formatToISO8601 = (zonedDateTime: ZonedDateTime): string => {
+const formatToISO8601 = (zonedDateTime: ZonedDateTime) => {
   const { year, month, day, hour, minute, second } = zonedDateTime;
   const date = new Date(year, month - 1, day, hour, minute, second);
-  const utcDate = new Date(date).toISOString();
-  return formatISO(utcDate);
+  const formattedDate = format(date, "yyyy-MM-dd'T'HH:mm:ss");
+  return formattedDate;
 };
 
 const getEndOfDay = (zonedDateTime: ZonedDateTime): ZonedDateTime => {
@@ -63,25 +63,13 @@ const getEndOfDay = (zonedDateTime: ZonedDateTime): ZonedDateTime => {
   );
 };
 
-const getCurrentTime = (isEnd = false) => {
-  if (isEnd) {
-    const date = new Date();
-    date.setHours(23, 59, 0, 0);
-    return date.toISOString();
-  }
-  return new Date().toISOString();
-};
-
-const convertToISO8601 = (
-  dateZoned: string,
-  timeZoned: TimeInputValue
-): string => {
-  const time = timeZoned?.toString();
-  const date = dateZoned?.toString();
-  const formattedTime = time.match(/\d\d:\d\d/)[0];
-  const dateTime = `${date}T${formattedTime}:00`;
-  return dateTime;
-};
+// const convertToISO8601 = (dateZoned: string): string => {
+//   const time = timeZoned?.toString();
+//   const date = dateZoned?.toString();
+//   const formattedTime = time.match(/\d\d:\d\d/)[0];
+//   const dateTime = `${date}T00:00`;
+//   return dateTime;
+// };
 
 export default function Home() {
   const {
@@ -89,16 +77,9 @@ export default function Home() {
     onOpen: deleteMultiBookingOnOpen,
     onOpenChange: deleteMultiBookingOnOpenChange
   } = useDisclosure();
-
-  const [filterDate, setFilterDate] = useState<DateValue>();
-  const [selectedDate, setSelectedDate] = useState<ZonedDateTime>(
+  const canvasRef = useRef(null);
+  const [filterDate, setFilterDate] = useState<ZonedDateTime>(
     generateDates()[0]
-  );
-  const [startTime, setStartTime] = useState<TimeInputValue>(
-    parseAbsoluteToLocal(getCurrentTime())
-  );
-  const [endTime, setEndTime] = useState<TimeInputValue>(
-    parseAbsoluteToLocal(getCurrentTime(true))
   );
   const [submitDate, setSubmitDate] = useState<RangeValue<DateValue>>({
     start: today(getLocalTimeZone()),
@@ -106,7 +87,6 @@ export default function Home() {
   });
   const [refreshComponent, setRefreshComponent] = useState(false);
   const [btnLoading, setbtnLoading] = useState(false);
-
   const [deskList, setDeskList] = useState<IDesk[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(true);
   const [roomList, setRoomList] = useState([]);
@@ -129,8 +109,8 @@ export default function Home() {
 
   async function getRoom() {
     setIsSubmitting(true);
-    const startDate = formatToISO8601(selectedDate);
-    const endDate = formatToISO8601(getEndOfDay(selectedDate));
+    const startDate = formatToISO8601(filterDate);
+    const endDate = formatToISO8601(getEndOfDay(filterDate));
 
     try {
       const res = await RoomsService.getInstance().getRoomById([
@@ -158,18 +138,12 @@ export default function Home() {
     }
   }
 
-  useEffect(() => {
-    selectedRoom && getRoom();
-  }, [selectedRoom, refreshComponent, selectedDate]);
-
-  useEffect(() => {
-    getRoomCompact();
-  }, []);
-
-  const handleDateChange = (newDate: any) => {
+  const handleFilterDateChange = (newDate: any) => {
     const timeZone = getLocalTimeZone();
     let hour = 0;
     let minute = 0;
+    let endHour = 23;
+    let endMinute = 59;
 
     const todayDate = today(timeZone);
     if (
@@ -180,9 +154,14 @@ export default function Home() {
       const now = new Date();
       hour = now.getHours();
       minute = now.getMinutes();
+    } else {
+      hour = 0;
+      minute = 0;
+      endHour = 23;
+      endMinute = 59;
     }
 
-    const zonedDate = new ZonedDateTime(
+    const startZonedDate = new ZonedDateTime(
       newDate.year,
       newDate.month,
       newDate.day,
@@ -193,51 +172,39 @@ export default function Home() {
       newDate.second,
       newDate.millisecond
     );
-    setFilterDate(newDate);
-    setSelectedDate(zonedDate);
-  };
-  const handleButtonDateSelect = (date: any) => {
-    const timeZone = getLocalTimeZone();
-    let hour = 0;
-    let minute = 0;
-
-    const todayDate = today(timeZone);
-    if (
-      date.year === todayDate.year &&
-      date.month === todayDate.month &&
-      date.day === todayDate.day
-    ) {
-      const now = new Date();
-      hour = now.getHours();
-      minute = now.getMinutes();
-    }
-
-    const zonedDate = new ZonedDateTime(
-      date.year,
-      date.month,
-      date.day,
+    const endZonedDate = new ZonedDateTime(
+      newDate.year,
+      newDate.month,
+      newDate.day,
       timeZone,
       0,
-      hour,
-      minute,
-      date.second,
-      date.millisecond
+      endHour,
+      endMinute,
+      newDate.second,
+      newDate.millisecond
     );
-    setSelectedDate(zonedDate);
+
+    setFilterDate(startZonedDate);
+    setSubmitDate({
+      start: startZonedDate,
+      end: endZonedDate
+    });
   };
+
   async function bookDesk() {
     setbtnLoading(true);
-    const startDate = convertToISO8601(
-      submitDate?.start?.toString(),
-      startTime
-    );
-    const endDate = convertToISO8601(submitDate?.end?.toString(), endTime);
 
+    const startDateTime = new Date(submitDate.start.toString());
+    const endDateTime = new Date(submitDate.end.toString());
+    const startDate = `${format(startDateTime, 'yyyy-MM-dd')}T00:00:00`;
+    const endDate = `${format(endDateTime, 'yyyy-MM-dd')}T23:59:59`;
+    console.log(startDate, 'salam-start');
+    console.log(endDate, 'salam-start');
     try {
       const res = await RoomsService.getInstance().bookDesk({
         deskId: selectedDesk?.deskId,
-        startDate, // Pass Date object directly
-        endDate // Pass Date object directly
+        startDate: 1, // Pass Date object directly
+        endDate: 2 // Pass Date object directly
       });
       if (res) {
         setRefreshComponent(z => !z);
@@ -247,6 +214,7 @@ export default function Home() {
     }
     setbtnLoading(false);
   }
+
   async function cancelDesk() {
     setbtnLoading(true);
     try {
@@ -261,7 +229,6 @@ export default function Home() {
     }
     setbtnLoading(false);
   }
-  const canvasRef = useRef(null);
 
   useEffect(() => {
     const perpx = 1.9 / 1920;
@@ -283,6 +250,17 @@ export default function Home() {
     return () => window.removeEventListener('resize', scaleCanvas);
   }, []);
 
+  useEffect(() => {
+    selectedRoom && getRoom();
+  }, [selectedRoom, refreshComponent, filterDate]);
+
+  useEffect(() => {
+    getRoomCompact();
+  }, []);
+
+  useEffect(() => {
+    setSelectedDesk(null);
+  }, [selectedRoom]);
   return (
     <div className="flex flex-col justify-center items-center">
       <Tabs
@@ -290,7 +268,7 @@ export default function Home() {
         aria-label="Options"
         selectedKey={selectedRoom}
         onSelectionChange={(e: number) => {
-          setSelectedDate(generateDates()[0]);
+          setFilterDate(generateDates()[0]);
           setSelectedRoom(e);
         }}
       >
@@ -305,20 +283,18 @@ export default function Home() {
                         <Button
                           key={`${index}`}
                           color={
-                            selectedDate.day === date.day
-                              ? 'primary'
-                              : 'default'
+                            filterDate.day === date.day ? 'primary' : 'default'
                           }
-                          onClick={() => handleButtonDateSelect(date)}
+                          onClick={() => handleFilterDateChange(date)}
                         >
                           {`${date.day}/${date.month}/${date.year}`}
                         </Button>
                       ))}
                     </ButtonGroup>
                     <DatePicker
-                      onChange={handleDateChange}
+                      hourCycle={24}
+                      onChange={handleFilterDateChange}
                       value={filterDate}
-                      className="max-w-[184px]"
                       minValue={today(getLocalTimeZone())}
                     />
                   </div>
@@ -329,30 +305,11 @@ export default function Home() {
                     <DateRangePicker
                       aria-label="Date (Controlled)"
                       value={submitDate}
-                      allowsNonContiguousRanges
                       onChange={setSubmitDate}
+                      hourCycle={24}
+                      minValue={today(getLocalTimeZone())}
                       size="lg"
-                      hideTimeZone
-                      className="max-w-[384px]"
                       visibleMonths={2}
-                      CalendarBottomContent={
-                        <div className="flex justify-between items-center gap-2 p-3 w-full">
-                          <TimeInput
-                            hourCycle={24}
-                            hideTimeZone
-                            label="Start Time"
-                            value={startTime}
-                            onChange={setStartTime}
-                          />
-                          <TimeInput
-                            hourCycle={24}
-                            hideTimeZone
-                            label="End Time"
-                            value={endTime}
-                            onChange={setEndTime}
-                          />
-                        </div>
-                      }
                       calendarWidth={900}
                     />
                     {selectedDesk?.isBookedByMe ? (

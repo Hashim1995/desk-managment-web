@@ -20,7 +20,7 @@ export class RoomsService {
   // eslint-disable-next-line no-use-before-define
   private static instance: RoomsService | null;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): RoomsService {
     if (!this.instance) {
@@ -93,7 +93,7 @@ export class RoomsService {
     payload: { deskId: number; startDate: any; endDate: any },
     onError?: ErrorCallBack
   ): Promise<{ id: number }> {
-    const res = await HttpUtil.post('/Bookings', payload, onError);
+    const res = await HttpUtil.post('/Bookingssalam', payload, onError);
     return res;
   }
 

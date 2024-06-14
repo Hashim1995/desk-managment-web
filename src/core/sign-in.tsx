@@ -2,13 +2,19 @@
 /* eslint-disable react/button-has-type */
 import AppHandledSolidButton from '@/components/forms/button/app-handled-solid-button';
 import AppHandledInput from '@/components/forms/input/handled-input';
-import { ILogin, ILoginResponse } from '@/models/user';
+import { IGoogleLogin, ILogin, ILoginResponse } from '@/models/user';
 import { fetchUserData } from '@/redux/auth/auth-slice';
 import { AppDispatch } from '@/redux/store';
 import { AuthService } from '@/services/auth-services/auth-services';
 import { inputPlaceholderText } from '@/utils/constants/texts';
 import { inputValidationText } from '@/utils/constants/validations';
+
 import { useDisclosure } from '@nextui-org/react';
+import {
+  GoogleLogin,
+  useGoogleLogin,
+  useGoogleOneTapLogin
+} from '@react-oauth/google';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -49,12 +55,35 @@ function SignIn() {
       console.log(err);
     }
   };
+
+  const loginWithGoogle = async (data: IGoogleLogin) => {
+    try {
+      const res: ILoginResponse =
+        await AuthService.getInstance().loginWithGoogle(data);
+      if (!res) return;
+      if (!userToken) setUserToken({ token: res?.token });
+      dispatch(fetchUserData());
+      navigate('/');
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <section className="flex flex-col h-auto min-h-screen">
       <div className="mx-auto px-4 sm:px-6 max-w-6xl">
         <div className="pt-32 md:pt-24 pb-12 md:pb-20">
           {/* Form */}
           <div className="mx-auto w-full max-w-sm">
+            {/* <GoogleLogin
+              onSuccess={credentialResponse => {
+                console.log(credentialResponse);
+              }}
+              onError={() => {
+                console.log('Login Failed');
+              }}
+            /> */}
+
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col space-y-5"
@@ -151,6 +180,31 @@ function SignIn() {
               >
                 {t('login')}
               </AppHandledSolidButton>
+              <GoogleLogin
+                width={'384px'}
+                size="large"
+                ux_mode="popup"
+                onSuccess={credentialResponse => {
+                  loginWithGoogle(credentialResponse);
+                }}
+                onError={() => {
+                  console.log('Login Failed');
+                }}
+              />
+              {/* <button
+                onClick={() => login()}
+                className="flex justify-between gap-2 border-slate-200 hover:border-slate-400 dark:hover:border-slate-500 dark:border-slate-700 hover:shadow px-4 py-2 border rounded-lg text-slate-700 hover:text-slate-900 dark:hover:text-slate-300 dark:text-slate-200 transition duration-150"
+              >
+                <img
+                  aria-label=""
+                  className="w-6 h-6"
+                  src="https://www.svgrepo.com/show/475656/google-color.svg"
+                  loading="lazy"
+                  alt="google logo"
+                />
+                <span>Login with Google</span>
+                <div />
+              </button> */}
             </form>
           </div>
         </div>

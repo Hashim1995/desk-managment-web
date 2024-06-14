@@ -25,6 +25,8 @@ export const fetchUserData = createAsyncThunk(
       const response = await AuthService.getInstance().getMe();
       return response;
     } catch (err) {
+      localStorage.removeItem('userToken');
+      window.location.reload();
       throw err;
     }
   }
