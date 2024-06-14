@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable radix */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-shadow */
@@ -106,7 +107,6 @@ export default function Home() {
   const [refreshComponent, setRefreshComponent] = useState(false);
   const [btnLoading, setbtnLoading] = useState(false);
 
-  const [currentRoom, setCurrentRoom] = useState<IRoomByIdResponse>();
   const [deskList, setDeskList] = useState<IDesk[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(true);
   const [roomList, setRoomList] = useState([]);
@@ -139,7 +139,6 @@ export default function Home() {
         { name: 'endDate', value: endDate }
       ]);
       if (res?.roomId) {
-        setCurrentRoom(res);
         setDeskList(res?.desks);
         res?.photoFileId && fetchTokenizedImage(res?.photoFileId?.toString());
         setIsSubmitting(false);
@@ -169,21 +168,63 @@ export default function Home() {
 
   const handleDateChange = (newDate: any) => {
     const timeZone = getLocalTimeZone();
+    let hour = 0;
+    let minute = 0;
+
+    const todayDate = today(timeZone);
+    if (
+      newDate.year === todayDate.year &&
+      newDate.month === todayDate.month &&
+      newDate.day === todayDate.day
+    ) {
+      const now = new Date();
+      hour = now.getHours();
+      minute = now.getMinutes();
+    }
+
     const zonedDate = new ZonedDateTime(
       newDate.year,
       newDate.month,
       newDate.day,
       timeZone,
       0,
-      newDate.hour,
-      newDate.minute,
+      hour,
+      minute,
       newDate.second,
       newDate.millisecond
     );
     setFilterDate(newDate);
     setSelectedDate(zonedDate);
   };
+  const handleButtonDateSelect = (date: any) => {
+    const timeZone = getLocalTimeZone();
+    let hour = 0;
+    let minute = 0;
 
+    const todayDate = today(timeZone);
+    if (
+      date.year === todayDate.year &&
+      date.month === todayDate.month &&
+      date.day === todayDate.day
+    ) {
+      const now = new Date();
+      hour = now.getHours();
+      minute = now.getMinutes();
+    }
+
+    const zonedDate = new ZonedDateTime(
+      date.year,
+      date.month,
+      date.day,
+      timeZone,
+      0,
+      hour,
+      minute,
+      date.second,
+      date.millisecond
+    );
+    setSelectedDate(zonedDate);
+  };
   async function bookDesk() {
     setbtnLoading(true);
     const startDate = convertToISO8601(
@@ -241,6 +282,7 @@ export default function Home() {
     // Cleanup the event listener when the component unmounts
     return () => window.removeEventListener('resize', scaleCanvas);
   }, []);
+
   return (
     <div className="flex flex-col justify-center items-center">
       <Tabs
@@ -248,6 +290,7 @@ export default function Home() {
         aria-label="Options"
         selectedKey={selectedRoom}
         onSelectionChange={(e: number) => {
+          setSelectedDate(generateDates()[0]);
           setSelectedRoom(e);
         }}
       >
@@ -266,7 +309,7 @@ export default function Home() {
                               ? 'primary'
                               : 'default'
                           }
-                          onClick={() => setSelectedDate(date)}
+                          onClick={() => handleButtonDateSelect(date)}
                         >
                           {`${date.day}/${date.month}/${date.year}`}
                         </Button>
@@ -276,6 +319,7 @@ export default function Home() {
                       onChange={handleDateChange}
                       value={filterDate}
                       className="max-w-[184px]"
+                      minValue={today(getLocalTimeZone())}
                     />
                   </div>
                 </div>
