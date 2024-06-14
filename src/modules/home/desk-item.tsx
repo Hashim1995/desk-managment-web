@@ -65,7 +65,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
     width: `${desk?.width}px`,
     height: `${desk?.height}px`,
     opacity:
-      desk?.isBookedByMe || desk?.clientId === selectedDesk?.clientId
+      desk?.isBookedByMe || desk?.deskId === selectedDesk?.deskId
         ? '100%'
         : `${desk?.opacity}%`,
     // opacity: `${desk?.opacity}%`,
