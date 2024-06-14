@@ -196,10 +196,11 @@ export default function Home() {
 
     const startDateTime = new Date(submitDate.start.toString());
     const endDateTime = new Date(submitDate.end.toString());
-    const startDate = `${format(startDateTime, 'yyyy-MM-dd')}T00:00:00`;
-    const endDate = `${format(endDateTime, 'yyyy-MM-dd')}T23:59:59`;
-    console.log(startDate, 'salam-start');
-    console.log(endDate, 'salam-start');
+
+    // const startDate = `${format(startDateTime, 'yyyy-MM-dd')}T00:00:00`;
+    // const endDate = `${format(endDateTime, 'yyyy-MM-dd')}T23:59:59`;
+    console.log(startDateTime, 'salam-start');
+    console.log(endDateTime, 'salam-start');
     try {
       const res = await RoomsService.getInstance().bookDesk({
         deskId: selectedDesk?.deskId,
@@ -294,6 +295,7 @@ export default function Home() {
                     <DatePicker
                       hourCycle={24}
                       onChange={handleFilterDateChange}
+                      granularity="day"
                       value={filterDate}
                       minValue={today(getLocalTimeZone())}
                     />
@@ -305,6 +307,7 @@ export default function Home() {
                     <DateRangePicker
                       aria-label="Date (Controlled)"
                       value={submitDate}
+                      granularity="day"
                       onChange={setSubmitDate}
                       hourCycle={24}
                       minValue={today(getLocalTimeZone())}
