@@ -78,14 +78,16 @@ function LeadsTable() {
           aria-label="Example static collection table"
           bottomContent={
             <div className="flex justify-center w-full">
-              <Pagination
-                isCompact
-                color="default"
-                showControls
-                total={Math.ceil(data?.totalCount / 10)}
-                page={currentPage}
-                onChange={page => setCurrentPage(page)}
-              />
+              {data?.totalCount > 10 ? (
+                <Pagination
+                  isCompact
+                  color="default"
+                  showControls
+                  total={Math.ceil(data?.totalCount / 10)}
+                  page={currentPage}
+                  onChange={page => setCurrentPage(page)}
+                />
+              ) : null}
             </div>
           }
         >

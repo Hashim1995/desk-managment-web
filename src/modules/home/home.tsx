@@ -252,6 +252,7 @@ export default function Home() {
         selectedDesk?.bookings[0]?.bookingId
       );
       if (res) {
+        setSelectedDesk(null);
         setRefreshComponent(z => !z);
       }
     } catch (err) {
