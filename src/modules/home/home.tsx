@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-use-before-define */
 /* eslint-disable radix */
 /* eslint-disable react/no-array-index-key */
@@ -9,9 +10,11 @@ import {
   ZonedDateTime,
   now,
   parseAbsoluteToLocal,
-  Time
+  Time,
+  parseDate,
+  CalendarDate
 } from '@internationalized/date';
-import { format, formatISO, sub } from 'date-fns';
+import { format, formatISO, isToday, parseISO, sub } from 'date-fns';
 import { useState, useEffect, useRef } from 'react';
 import {
   Tabs,
@@ -62,14 +65,34 @@ const getEndOfDay = (zonedDateTime: ZonedDateTime): ZonedDateTime => {
     zonedDateTime.second
   );
 };
+function extractDate(input: string): string {
+  const dateMatch = input.match(/\d{4}-\d{2}-\d{2}/);
+  return dateMatch ? dateMatch[0] : 'Invalid Date';
+}
 
-// const convertToISO8601 = (dateZoned: string): string => {
-//   const time = timeZoned?.toString();
-//   const date = dateZoned?.toString();
-//   const formattedTime = time.match(/\d\d:\d\d/)[0];
-//   const dateTime = `${date}T00:00`;
-//   return dateTime;
-// };
+function formatDates(
+  start: string,
+  end: string
+): { startDate: string; endDate: string } {
+  const startDateString = extractDate(start);
+  const endDateString = extractDate(end);
+  const startDate = parseISO(startDateString);
+  const endDate = parseISO(endDateString);
+
+  let formattedStartDate: string;
+  let formattedEndDate: string;
+
+  if (isToday(startDate)) {
+    formattedStartDate = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
+  } else {
+    formattedStartDate = format(startDate, "yyyy-MM-dd'T'00:00:00");
+  }
+  formattedEndDate = format(endDate, "yyyy-MM-dd'T'23:59:00");
+  return {
+    startDate: formattedStartDate,
+    endDate: formattedEndDate
+  };
+}
 
 export default function Home() {
   const {
@@ -160,7 +183,6 @@ export default function Home() {
       endHour = 23;
       endMinute = 59;
     }
-
     const startZonedDate = new ZonedDateTime(
       newDate.year,
       newDate.month,
@@ -172,40 +194,47 @@ export default function Home() {
       newDate.second,
       newDate.millisecond
     );
-    const endZonedDate = new ZonedDateTime(
+
+    setFilterDate(startZonedDate);
+    const startZonedDateForSubmit = new ZonedDateTime(
       newDate.year,
       newDate.month,
       newDate.day,
       timeZone,
-      0,
-      endHour,
-      endMinute,
-      newDate.second,
-      newDate.millisecond
+      0, // Saat
+      0, // Dakika
+      0, // Saniye
+      0 // Milisaniye
     );
 
-    setFilterDate(startZonedDate);
-    setSubmitDate({
-      start: startZonedDate,
-      end: endZonedDate
-    });
+    // Bitiş tarihi için ZonedDateTime nesnesi oluşturma (23:59:59 olarak)
+    const ForSubmit = new ZonedDateTime(
+      newDate.year,
+      newDate.month,
+      newDate.day,
+      timeZone,
+      23, // Saat
+      59, // Dakika
+      59, // Saniye
+      0 // Milisaniye
+    );
+
+    setSubmitDate({ start: startZonedDateForSubmit, end: ForSubmit });
   };
 
   async function bookDesk() {
     setbtnLoading(true);
 
-    const startDateTime = new Date(submitDate.start.toString());
-    const endDateTime = new Date(submitDate.end.toString());
+    const { startDate, endDate } = formatDates(
+      submitDate.start?.toString(),
+      submitDate.end?.toString()
+    );
 
-    // const startDate = `${format(startDateTime, 'yyyy-MM-dd')}T00:00:00`;
-    // const endDate = `${format(endDateTime, 'yyyy-MM-dd')}T23:59:59`;
-    console.log(startDateTime, 'salam-start');
-    console.log(endDateTime, 'salam-start');
     try {
       const res = await RoomsService.getInstance().bookDesk({
         deskId: selectedDesk?.deskId,
-        startDate: 1, // Pass Date object directly
-        endDate: 2 // Pass Date object directly
+        startDate,
+        endDate
       });
       if (res) {
         setRefreshComponent(z => !z);
