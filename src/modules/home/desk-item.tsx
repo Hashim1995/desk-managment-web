@@ -43,10 +43,15 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
   };
 
   useEffect(() => {
-    desk?.ownerPhotoFileId &&
-      fetchTokenizedImage(
-        desk?.isBookedByMe ? user?.photoFileId : desk?.ownerPhotoFileId
-      );
+    const photoFileId = desk?.isBookedByMe
+      ? user?.photoFileId
+      : desk?.bookings?.length
+      ? desk?.bookings[0]?.bookedUserPhotoId
+      : desk?.ownerPhotoFileId;
+
+    if (photoFileId) {
+      fetchTokenizedImage(photoFileId);
+    }
   }, [desk]);
 
   const style = {
@@ -133,7 +138,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
                     {' '}
                     {format(
                       parseISO(desk?.bookings[0]?.startDate),
-                      'dd.MM.yyyy HH:mm'
+                      'dd.MM.yyyy'
                     )}
                   </p>
                 </div>
@@ -142,10 +147,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
                     End
                   </p>
                   <p className="text-default-500 text-small">
-                    {format(
-                      parseISO(desk?.bookings[0]?.endDate),
-                      'dd.MM.yyyy HH:mm'
-                    )}
+                    {format(parseISO(desk?.bookings[0]?.endDate), 'dd.MM.yyyy')}
                   </p>
                 </div>
               </div>
@@ -172,6 +174,9 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
           }
           // If the desk is owned by another person and booking is not allowed, it cannot be selected
           if (isOwnedByAnother && !isBookingAllowedByOwner) {
+            return;
+          }
+          if (isOwnedByMe && !isBookingAllowedByOwner) {
             return;
           }
           // If the desk is owned by me, or it is owned by another person but booking is allowed, it can be selected

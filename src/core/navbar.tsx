@@ -3,13 +3,14 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, ButtonGroup, useDisclosure, User } from '@nextui-org/react';
 import { IoLogOutOutline } from 'react-icons/io5';
 import { RootState } from '@/redux/store';
 import { t } from 'i18next';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom'; // Import from react-router-dom
+import { tokenizeImage } from '@/utils/functions/functions';
 
 import { BsTable } from 'react-icons/bs';
 import { AcmeLogo } from './logo';
@@ -18,7 +19,28 @@ import MyDesksModal from './my-desks-modal';
 export default function AppNavbar() {
   const { user } = useSelector((state: RootState) => state.user);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [photoUrl, setPhotoUrl] = useState<string>('');
 
+  const fetchTokenizedImage = async (id: number) => {
+    try {
+      const tokenizedFile = await tokenizeImage({
+        url: '',
+        fileUrl: `${import.meta.env.VITE_BASE_URL}Files/${id}`
+      });
+
+      setPhotoUrl(tokenizedFile?.url || '');
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    // if (!user?.id) {
+    //   localStorage.removeItem('userToken');
+    //   window.location.reload();
+    // }
+    fetchTokenizedImage(user?.photoFileId);
+  }, [user]);
   return (
     <>
       <div className="z-10 flex justify-between items-center gap-5 bg-transparent px-12 py-3 w-full">
@@ -61,7 +83,7 @@ export default function AppNavbar() {
                 name={user ? `${user.firstName} ${user.lastName}` : t('empty')}
                 description={user.email || t('empty')}
                 avatarProps={{
-                  src: `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=0D8ABC&color=fff`
+                  src: photoUrl
                 }}
                 classNames={{
                   description: 'text-default-900 dark:text-white'
