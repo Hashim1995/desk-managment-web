@@ -242,7 +242,7 @@ export default function Home() {
     return () => window.removeEventListener('resize', scaleCanvas);
   }, []);
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col min-w-[320px] justify-center items-center">
       <Tabs
         size="lg"
         aria-label="Options"
@@ -254,9 +254,9 @@ export default function Home() {
         {roomList?.map(z => (
           <Tab key={z?.id} title={z?.name}>
             {!isSubmitting ? (
-              <div className="min-h-screen">
+              <div className="min-h-screen flex flex-col gap-8 ">
                 <div className="flex flex-col items-center p-4">
-                  <div className="flex items-center gap-2">
+                  <div className="flex max-sm:flex-col items-center gap-2">
                     <ButtonGroup>
                       {generateDates()?.map((date, index) => (
                         <Button
@@ -340,13 +340,23 @@ export default function Home() {
                     )}
                   </div>
                 )}
-                <div className="relative flex justify-center items-center mt-10">
-                  <div className="-top-3 z-10 absolute flex gap-2">
-                    <Chip color="primary"> My bookings</Chip>
-                    <Chip color="secondary">Assigned to me</Chip>
-                    <Chip color="success">Free</Chip>
-                    <Chip color="warning"> Assigned to someone</Chip>
-                    <Chip color="danger">Booked</Chip>
+                <div className="relative flex justify-center items-center  ">
+                  <div className="-top-6 z-10 absolute flex gap-2 text-white">
+                    <Chip className=" rounded-lg" color="primary">
+                      My bookings
+                    </Chip>
+                    <Chip className=" rounded-lg" color="secondary">
+                      Assigned to me
+                    </Chip>
+                    <Chip className="text-white rounded-lg" color="success">
+                      Free
+                    </Chip>
+                    <Chip className="text-white rounded-lg" color="warning">
+                      Assigned to someone
+                    </Chip>
+                    <Chip className=" rounded-lg" color="danger">
+                      Booked
+                    </Chip>
                   </div>
                   <div
                     id="canvas"
@@ -354,12 +364,12 @@ export default function Home() {
                     style={{
                       backgroundRepeat: 'no-repeat'
                     }}
-                    className="relative bg-gray-100 border w-[1000px] h-[1000px] overflow-scroll"
+                    className="relative bg-gray-100 border w-[1000px] min-w-[320px] min-h-[320px] h-[1000px] overflow-scroll"
                   >
                     <img
                       alt=""
                       src={photoUrl}
-                      className="absolute inset-0 object-contain"
+                      className=" absolute inset-0 object-contain"
                     />
                     {deskList.map(desk => (
                       <DeskItem

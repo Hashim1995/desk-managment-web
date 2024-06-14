@@ -21,19 +21,19 @@ export default function AppNavbar() {
 
   return (
     <>
-      <div className="z-10 flex justify-between items-center gap-5 bg-transparent px-12 py-3 w-full">
-        <div>
+      <div className="z-10 max-w-6xl m-auto min-w-[320px] flex justify-between items-center gap-5 max-sm:gap-3 max-[350px]:gap-1 bg-transparent max-sm:px-2 px-12 py-3 w-full">
+        <div className="flex items-center">
           <AcmeLogo />
-          <p className="font-bold text-inherit">ACME</p>
+          <p className="font-bold text-inherit text-lg max-sm:hidden">ACME</p>
         </div>
 
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-center gap-4 max-sm:gap-2">
           {user?.id ? (
             <ButtonGroup>
               <Button
                 as={Link}
                 to="/"
-                className="dark:text-white"
+                className="dark:text-white max-sm:px-3 max-[350px]:px-2"
                 variant="light"
               >
                 Booking
@@ -41,12 +41,16 @@ export default function AppNavbar() {
               <Button
                 as={Link}
                 to="/reports"
-                className="dark:text-white"
+                className="dark:text-white max-sm:px-3 max-[350px]:px-2"
                 variant="light"
               >
                 Reports
               </Button>
-              <Button variant="light" onClick={onOpen}>
+              <Button
+                className="max-sm:px-3 max-[350px]:px-2"
+                variant="light"
+                onClick={onOpen}
+              >
                 Settings
               </Button>
             </ButtonGroup>
@@ -55,7 +59,7 @@ export default function AppNavbar() {
           )}
         </div>
         <div className="flex justify-center">
-          {user?.id ? (
+          {user?.id && (
             <div className="flex items-center gap-2">
               <User
                 name={user ? `${user.firstName} ${user.lastName}` : t('empty')}
@@ -77,10 +81,6 @@ export default function AppNavbar() {
                   window.location.reload();
                 }}
               />
-            </div>
-          ) : (
-            <div className="flex">
-              <Link to="/sign-in">Sign in</Link>
             </div>
           )}
         </div>
