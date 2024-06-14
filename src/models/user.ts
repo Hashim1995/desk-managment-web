@@ -19,10 +19,17 @@ export interface ILogin {
 }
 export interface IGoogleLogin {
   credential?: string;
-  select_by?: 'auto' | 'user' | 'user_1tap' | 'user_2tap' | 'btn' | 'btn_confirm' | 'btn_add_session' | 'btn_confirm_add_session';
+  select_by?:
+    | 'auto'
+    | 'user'
+    | 'user_1tap'
+    | 'user_2tap'
+    | 'btn'
+    | 'btn_confirm'
+    | 'btn_add_session'
+    | 'btn_confirm_add_session';
   clientId?: string;
 }
-
 
 export interface ILoginResponse extends IGlobalResponse {
   firstName: string;
