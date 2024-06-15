@@ -1,20 +1,12 @@
 /* eslint-disable prefer-const */
-/* eslint-disable no-use-before-define */
-/* eslint-disable radix */
-/* eslint-disable react/no-array-index-key */
 /* eslint-disable no-shadow */
-/* eslint-disable no-unused-vars */
 import {
   today,
   getLocalTimeZone,
   ZonedDateTime,
-  now,
-  parseAbsoluteToLocal,
-  Time,
-  parseDate,
-  CalendarDate
+  now
 } from '@internationalized/date';
-import { format, formatISO, isToday, parseISO, sub } from 'date-fns';
+import { format, isToday, parseISO } from 'date-fns';
 import { useState, useEffect, useRef } from 'react';
 import {
   Tabs,
@@ -24,11 +16,7 @@ import {
   Spinner,
   DateValue,
   DateRangePicker,
-  TimeInput,
   RangeValue,
-  RangeCalendar,
-  TimeInputValue,
-  DateInput,
   useDisclosure,
   ButtonGroup,
   Chip
@@ -37,14 +25,13 @@ import { RoomsService } from '@/services/rooms-services/rooms-services';
 import AppHandledBorderedButton from '@/components/forms/button/app-handled-bordered-button';
 import { tokenizeImage } from '@/utils/functions/functions';
 import DeskItem from './desk-item';
-import { IRoomByIdResponse, IDesk } from './types';
+import { IDesk } from './types';
 import DeleteMultiBookingModal from './delete-multi-booking';
 
 const generateDates = (): ZonedDateTime[] => {
   const today = now(getLocalTimeZone());
   return Array.from({ length: 7 }, (_, i) => today.add({ days: i }));
 };
-
 const formatToISO8601 = (zonedDateTime: ZonedDateTime) => {
   const { year, month, day, hour, minute, second } = zonedDateTime;
   const date = new Date(year, month - 1, day, hour, minute, second);
@@ -165,8 +152,6 @@ export default function Home() {
     const timeZone = getLocalTimeZone();
     let hour = 0;
     let minute = 0;
-    let endHour = 23;
-    let endMinute = 59;
 
     const todayDate = today(timeZone);
     if (
@@ -180,8 +165,6 @@ export default function Home() {
     } else {
       hour = 0;
       minute = 0;
-      endHour = 23;
-      endMinute = 59;
     }
     const startZonedDate = new ZonedDateTime(
       newDate.year,
@@ -201,22 +184,21 @@ export default function Home() {
       newDate.month,
       newDate.day,
       timeZone,
-      0, // Saat
-      0, // Dakika
-      0, // Saniye
-      0 // Milisaniye
+      0,
+      0,
+      0,
+      0
     );
 
-    // Bitiş tarihi için ZonedDateTime nesnesi oluşturma (23:59:59 olarak)
     const ForSubmit = new ZonedDateTime(
       newDate.year,
       newDate.month,
       newDate.day,
       timeZone,
-      23, // Saat
-      59, // Dakika
-      59, // Saniye
-      0 // Milisaniye
+      23,
+      59,
+      59,
+      0
     );
 
     setSubmitDate({ start: startZonedDateForSubmit, end: ForSubmit });
@@ -262,6 +244,8 @@ export default function Home() {
   }
 
   useEffect(() => {
+    getRoomCompact();
+
     const perpx = 1.9 / 1920;
     const scaleCanvas = () => {
       if (canvasRef.current) {
@@ -277,7 +261,6 @@ export default function Home() {
     scaleCanvas();
     window.addEventListener('resize', scaleCanvas);
 
-    // Cleanup the event listener when the component unmounts
     return () => window.removeEventListener('resize', scaleCanvas);
   }, []);
 
@@ -286,12 +269,9 @@ export default function Home() {
   }, [selectedRoom, refreshComponent, filterDate]);
 
   useEffect(() => {
-    getRoomCompact();
-  }, []);
-
-  useEffect(() => {
     setSelectedDesk(null);
   }, [selectedRoom]);
+
   return (
     <div className="flex flex-col justify-center items-center">
       <Tabs
@@ -310,9 +290,9 @@ export default function Home() {
                 <div className="flex flex-col items-center p-4">
                   <div className="flex items-center gap-2">
                     <ButtonGroup>
-                      {generateDates()?.map((date, index) => (
+                      {generateDates()?.map(date => (
                         <Button
-                          key={`${index}`}
+                          key={`${date}`}
                           color={
                             filterDate.day === date.day ? 'primary' : 'default'
                           }
@@ -327,6 +307,9 @@ export default function Home() {
                       onChange={handleFilterDateChange}
                       granularity="day"
                       value={filterDate}
+                      onKeyDown={e => {
+                        e.preventDefault();
+                      }}
                       minValue={today(getLocalTimeZone())}
                     />
                   </div>
@@ -342,6 +325,9 @@ export default function Home() {
                       hourCycle={24}
                       minValue={today(getLocalTimeZone())}
                       size="lg"
+                      onKeyDown={e => {
+                        e.preventDefault();
+                      }}
                       visibleMonths={2}
                       calendarWidth={900}
                     />

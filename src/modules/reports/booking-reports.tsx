@@ -1,5 +1,4 @@
 /* eslint-disable no-nested-ternary */
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-shadow */
 import {
   Pagination,
@@ -16,7 +15,7 @@ import { useEffect, useState } from 'react';
 import Empty from '@/components/layout/empty';
 import { MdRefresh, MdSearch } from 'react-icons/md';
 import { RoomsService } from '@/services/rooms-services/rooms-services';
-import { format, formatISO, parse, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import AppHandledBorderedButton from '@/components/forms/button/app-handled-bordered-button';
 import AppHandledSolidButton from '@/components/forms/button/app-handled-solid-button';
 import AppHandledDatePicker from '@/components/forms/date/app-handled-date-picker';
