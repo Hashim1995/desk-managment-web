@@ -1,13 +1,10 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-nested-ternary */
-/* eslint-disable no-unused-vars */
 import { RootState } from '@/redux/store';
 import { tokenizeImage } from '@/utils/functions/functions';
 import {
   Avatar,
-  Button,
   Card,
-  CardBody,
   CardFooter,
   CardHeader,
   Tooltip
