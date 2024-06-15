@@ -271,6 +271,7 @@ export default function Home() {
   useEffect(() => {
     setSelectedDesk(null);
   }, [selectedRoom]);
+
   return (
     <div className="flex flex-col justify-center items-center">
       <Tabs
@@ -306,6 +307,9 @@ export default function Home() {
                       onChange={handleFilterDateChange}
                       granularity="day"
                       value={filterDate}
+                      onKeyDown={e => {
+                        e.preventDefault();
+                      }}
                       minValue={today(getLocalTimeZone())}
                     />
                   </div>
@@ -321,6 +325,9 @@ export default function Home() {
                       hourCycle={24}
                       minValue={today(getLocalTimeZone())}
                       size="lg"
+                      onKeyDown={e => {
+                        e.preventDefault();
+                      }}
                       visibleMonths={2}
                       calendarWidth={900}
                     />
