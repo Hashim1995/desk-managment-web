@@ -1,7 +1,7 @@
 /* eslint-disable no-empty-function */
 /* eslint-disable no-useless-constructor */
 /* eslint-disable class-methods-use-this */
-import { IAuth, ILogin, ILoginResponse } from '@/models/user';
+import { IAuth, IGoogleLogin, ILogin, ILoginResponse } from '@/models/user';
 import { IGlobalResponse } from '@/models/common';
 import { ErrorCallBack, HttpUtil } from '../adapter-config/config';
 
@@ -32,6 +32,14 @@ export class AuthService {
     onError?: ErrorCallBack
   ): Promise<ILoginResponse> {
     const res = await HttpUtil.post('/Account/Authentication', body, onError);
+    return res;
+  }
+
+  public async loginWithGoogle(
+    body: IGoogleLogin,
+    onError?: ErrorCallBack
+  ): Promise<ILoginResponse> {
+    const res = await HttpUtil.post('/Account/googleAuth', body, onError);
     return res;
   }
 

@@ -58,7 +58,7 @@ function LeadsTable() {
     ));
 
   return (
-    <div className="flex flex-col gap-2 w-full h-full min-h-screen">
+    <div className="flex flex-col gap-2 w-full h-full min-h-screen p-2 lg:p-6">
       <div className="relative flex justify-between items-center pe-6">
         <h3 className="font-semibold text-default-800 text-xl dark:text-white">
           Reports 😎

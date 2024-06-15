@@ -7,7 +7,7 @@ import AppNavbar from './navbar';
 function MainLayout() {
   const { user } = useSelector((state: RootState) => state.user);
   return (
-    <div className="h-screen">
+    <div>
       {user?.id && <AppNavbar />}
       <main>
         <Outlet />
