@@ -3,7 +3,6 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useState } from 'react';
 import {
   Button,
   ButtonGroup,
@@ -13,10 +12,12 @@ import {
 } from '@nextui-org/react';
 import { IoCloseCircleOutline, IoLogOutOutline } from 'react-icons/io5';
 import { CiMenuFries } from 'react-icons/ci';
+import { useEffect, useState } from 'react';
 import { RootState } from '@/redux/store';
 import { t } from 'i18next';
 import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom'; // Import from react-router-dom
+import { tokenizeImage } from '@/utils/functions/functions';
 
 import { AcmeLogo } from './logo';
 import MyDesksModal from './my-desks-modal';
@@ -26,7 +27,28 @@ export default function AppNavbar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isMobilMenuOpen, setIsMobilMenuOpen] = useState(false);
   const { pathname } = useLocation();
+  const [photoUrl, setPhotoUrl] = useState<string>('');
 
+  const fetchTokenizedImage = async (id: number) => {
+    try {
+      const tokenizedFile = await tokenizeImage({
+        url: '',
+        fileUrl: `${import.meta.env.VITE_BASE_URL}Files/${id}`
+      });
+
+      setPhotoUrl(tokenizedFile?.url || '');
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    // if (!user?.id) {
+    //   localStorage.removeItem('userToken');
+    //   window.location.reload();
+    // }
+    fetchTokenizedImage(user?.photoFileId);
+  }, [user]);
   return (
     <Navbar className="gradient-bg">
       <div className="z-10 max-w-6xl m-auto md:min-w-[320px] flex justify-between items-center gap-5 max-sm:gap-3 max-[350px]:gap-1 bg-transparent px-1 md:px-12 py-3 w-full">

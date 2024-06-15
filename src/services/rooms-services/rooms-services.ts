@@ -93,7 +93,7 @@ export class RoomsService {
     payload: { deskId: number; startDate: any; endDate: any },
     onError?: ErrorCallBack
   ): Promise<{ id: number }> {
-    const res = await HttpUtil.post('/Bookingssalam', payload, onError);
+    const res = await HttpUtil.post('/Bookings', payload, onError);
     return res;
   }
 

@@ -1,5 +1,6 @@
 interface IDeskBookings {
   bookedById: number;
+  bookedUserPhotoId: number;
   bookedByName: string;
   bookingId: number;
   endDate: any;
