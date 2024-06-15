@@ -11,6 +11,7 @@ interface IReportItem {
   startDate: string;
   endDate: string;
   deletedAt: string | null;
+  operationType: 1 | 2;
 }
 
 interface IBookingReportsResponse {
@@ -18,4 +19,12 @@ interface IBookingReportsResponse {
   items: IReportItem[];
 }
 
-export type { IReportItem, IBookingReportsResponse };
+interface IReportFilter {
+  bookingDate: any;
+  operationType: any;
+  roomName: string;
+  deskName: string;
+  deskOwnerName: string;
+}
+
+export type { IReportItem, IReportFilter, IBookingReportsResponse };
