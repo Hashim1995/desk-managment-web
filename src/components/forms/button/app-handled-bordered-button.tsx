@@ -83,7 +83,7 @@ interface IProps {
   form?: string;
 }
 function AppHandledBorderedButton({
-  color = 'secondary',
+  color,
   type = 'button',
   children,
   variant = 'bordered',
