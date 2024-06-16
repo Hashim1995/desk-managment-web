@@ -46,11 +46,11 @@ export default function AppNavbar() {
   };
 
   useEffect(() => {
+    fetchTokenizedImage(user?.photoFileId);
     // if (!user?.id) {
     //   localStorage.removeItem('userToken');
     //   window.location.reload();
     // }
-    fetchTokenizedImage(user?.photoFileId);
   }, [user]);
   return (
     <Navbar className="gradient-bg">
