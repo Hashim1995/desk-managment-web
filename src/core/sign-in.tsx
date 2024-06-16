@@ -193,7 +193,7 @@ function SignIn() {
               >
                 {t('login')}
               </AppHandledSolidButton>
-              <GoogleLogin
+              {/* <GoogleLogin
                 width={'384px'}
                 size="large"
                 ux_mode="popup"
@@ -203,7 +203,7 @@ function SignIn() {
                 onError={() => {
                   console.log('Login Failed');
                 }}
-              />
+              /> */}
             </form>
           </div>
         </div>
