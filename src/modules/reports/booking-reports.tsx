@@ -62,7 +62,8 @@ function LeadsTable() {
   ) => {
     setCurrentPage(1);
     if (data.bookingDate) {
-      data.bookingDate = convertDateToISO(data?.bookingDate?.toDate());
+      data.startDate = convertDateToISO(data?.startDate?.toDate());
+      data.endDate = convertDateToISO(data?.endDate?.toDate());
     }
     const queryParamsData: IHTTPSParams[] =
       convertFormDataToQueryParams<IReportFilter>(data);
@@ -176,12 +177,25 @@ function LeadsTable() {
             <div className="flex flex-col gap-5 w-1/2">
               <div className="w-full">
                 <AppHandledDatePicker
-                  name="bookingDate"
+                  name="startDate"
                   selectProps={{
-                    id: 'bookingDate'
+                    id: 'startDate'
                   }}
                   control={control}
-                  label={selectPlaceholderText('Date')}
+                  label={selectPlaceholderText('Start date')}
+                  // className="app-select text-base sm:text-xl"
+
+                  errors={errors}
+                />
+              </div>
+              <div className="w-full">
+                <AppHandledDatePicker
+                  name="endDate"
+                  selectProps={{
+                    id: 'endDate'
+                  }}
+                  control={control}
+                  label={selectPlaceholderText('End date')}
                   // className="app-select text-base sm:text-xl"
 
                   errors={errors}
