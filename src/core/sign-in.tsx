@@ -10,11 +10,7 @@ import { inputPlaceholderText } from '@/utils/constants/texts';
 import { inputValidationText } from '@/utils/constants/validations';
 
 import { useDisclosure } from '@nextui-org/react';
-import {
-  GoogleLogin,
-  useGoogleLogin,
-  useGoogleOneTapLogin
-} from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -193,17 +189,19 @@ function SignIn() {
               >
                 {t('login')}
               </AppHandledSolidButton>
-              <GoogleLogin
-                width={'384px'}
-                size="large"
-                ux_mode="popup"
-                onSuccess={credentialResponse => {
-                  loginWithGoogle(credentialResponse);
-                }}
-                onError={() => {
-                  console.log('Login Failed');
-                }}
-              />
+              <div className="flex items-center justify-center">
+                <GoogleLogin
+                  width="100%"
+                  size="large"
+                  ux_mode="popup"
+                  onSuccess={credentialResponse => {
+                    loginWithGoogle(credentialResponse);
+                  }}
+                  onError={() => {
+                    console.log('Login Failed');
+                  }}
+                />
+              </div>
             </form>
           </div>
         </div>

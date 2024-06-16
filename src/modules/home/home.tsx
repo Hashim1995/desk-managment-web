@@ -269,7 +269,7 @@ export default function Home() {
             {!isSubmitting ? (
               <div className="min-h-screen flex flex-col gap-8 ">
                 <div className="flex flex-col items-center p-4">
-                  <div className="flex max-[710px]:flex-col items-center gap-2">
+                  <div className="flex flex-col xl:flex-row items-center gap-2">
                     <div className="w-full">
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
                         {generateDates()?.map(date => (
@@ -299,7 +299,7 @@ export default function Home() {
                 </div>
 
                 {selectedDesk && (
-                  <div className="flex justify-between items-center gap-4 mt-10 w-full">
+                  <div className="flex flex-col mt-4 md:flex-row justify-between m-auto items-center gap-4 w-[300px] md:w-[600px] md:mt-10">
                     <DateRangePicker
                       aria-label="Date (Controlled)"
                       value={submitDate}
@@ -309,7 +309,6 @@ export default function Home() {
                       minValue={today(getLocalTimeZone())}
                       size="lg"
                       visibleMonths={2}
-                      calendarWidth={900}
                     />
                     {selectedDesk?.isBookedByMe ? (
                       <AppHandledBorderedButton
