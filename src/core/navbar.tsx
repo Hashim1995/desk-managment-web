@@ -54,13 +54,13 @@ export default function AppNavbar() {
   }, [user]);
   return (
     <Navbar className="gradient-bg">
-      <div className="z-10 max-w-6xl m-auto md:min-w-[320px] flex justify-between items-center gap-5 max-sm:gap-3 max-[350px]:gap-1 bg-transparent px-1 py-3 w-full">
-        <div className="flex items-center ">
+      <div className="z-10 flex justify-between items-center gap-5 max-[350px]:gap-1 max-sm:gap-3 bg-transparent m-auto px-1 py-3 w-full md:min-w-[320px] max-w-6xl">
+        <div className="flex items-center">
           <AcmeLogo />
-          <p className="font-bold text-inherit text-lg max-sm:hidden">ACME</p>
+          <p className="max-sm:hidden font-bold text-inherit text-lg">ACME</p>
         </div>
 
-        <div className=" justify-center gap-4 max-sm:gap-2 hidden md:flex">
+        <div className="md:flex justify-center gap-4 max-sm:gap-2 hidden">
           <ButtonGroup>
             <Button
               as={Link}
@@ -96,13 +96,13 @@ export default function AppNavbar() {
           </ButtonGroup>
         </div>
 
-        <div className="justify-center hidden md:flex">
+        <div className="md:flex justify-center hidden">
           <div className="flex items-center gap-2">
             <User
               name={user ? `${user.firstName} ${user.lastName}` : t('empty')}
               description={user.email || t('empty')}
               avatarProps={{
-                src: `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=0D8ABC&color=fff`
+                src: photoUrl
               }}
               classNames={{
                 description: 'text-default-900 dark:text-white'

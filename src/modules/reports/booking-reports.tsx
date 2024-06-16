@@ -49,7 +49,8 @@ function LeadsTable() {
   } = useForm<IReportFilter>({
     mode: 'onSubmit',
     defaultValues: {
-      bookingDate: null,
+      startDate: null,
+      endDate: null,
       deskName: '',
       deskOwnerName: '',
       roomName: '',
@@ -62,7 +63,8 @@ function LeadsTable() {
   ) => {
     setCurrentPage(1);
     if (data.bookingDate) {
-      data.bookingDate = convertDateToISO(data?.bookingDate?.toDate());
+      data.startDate = convertDateToISO(data?.startDate?.toDate());
+      data.endDate = convertDateToISO(data?.endDate?.toDate());
     }
     const queryParamsData: IHTTPSParams[] =
       convertFormDataToQueryParams<IReportFilter>(data);
@@ -114,7 +116,7 @@ function LeadsTable() {
 
   return (
     <div className="flex justify-center w-full">
-      <div className="flex flex-col gap-2 w-full h-full min-h-screen p-4 lg:p-6 max-w-[1024px] ">
+      <div className="flex flex-col gap-2 p-4 lg:p-6 w-full max-w-[1024px] h-full min-h-screen">
         <div className="relative flex justify-between items-center pe-6">
           <h3 className="font-semibold text-default-800 text-xl dark:text-white">
             Reports 😎
@@ -125,8 +127,8 @@ function LeadsTable() {
           onSubmit={handleSubmit(onSubmit)}
           className="flex sm:flex-row flex-col justify-between gap-3 sm:gap-4 mb-3 w-full"
         >
-          <div className="flex flex-col md:flex-row w-full">
-            <div className="left flex flex-col sm:flex-row gap-5 w-full">
+          <div className="flex md:flex-row flex-col w-full">
+            <div className="left flex sm:flex-row flex-col gap-5 w-full">
               <div className="flex flex-col gap-5 w-full sm:w-1/2">
                 <div className="w-full">
                   <AppHandledInput
@@ -177,12 +179,25 @@ function LeadsTable() {
               <div className="flex flex-col gap-5 w-full sm:w-1/2">
                 <div className="w-full">
                   <AppHandledDatePicker
-                    name="bookingDate"
+                    name="startDate"
                     selectProps={{
-                      id: 'bookingDate'
+                      id: 'startDate'
                     }}
                     control={control}
-                    label={selectPlaceholderText('Date')}
+                    label={selectPlaceholderText('Start date')}
+                    // className="app-select text-base sm:text-xl"
+
+                    errors={errors}
+                  />
+                </div>
+                <div className="w-full">
+                  <AppHandledDatePicker
+                    name="endDate"
+                    selectProps={{
+                      id: 'endDate'
+                    }}
+                    control={control}
+                    label={selectPlaceholderText('End date')}
                     // className="app-select text-base sm:text-xl"
 
                     errors={errors}
@@ -211,7 +226,7 @@ function LeadsTable() {
                 </div>
               </div>
             </div>
-            <div className="mt-4 md:mt-0 md:right flex md:flex-col items-start md:items-end gap-2 w-40">
+            <div className="md:right flex md:flex-col items-start md:items-end gap-2 mt-4 md:mt-0 w-40">
               <AppHandledSolidButton type="submit">
                 <MdSearch size={21} />
               </AppHandledSolidButton>

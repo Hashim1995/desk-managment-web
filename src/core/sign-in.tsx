@@ -23,7 +23,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import useDarkMode from 'use-dark-mode';
 import { useLocalStorage } from 'usehooks-ts';
-import LoginBg from '@assets/images/login-bg.jpg';
+import LoginBg from '@assets/images/login-bg.png';
 import { AcmeLogo } from './logo';
 
 function SignIn() {
@@ -73,15 +73,15 @@ function SignIn() {
 
   return (
     <section className="flex">
-      <div className="hidden md:block flex-1 h-screen relative">
-        <div className="flex items-center absolute top-4 left-4">
+      <div className="md:block relative flex-1 hidden h-screen">
+        <div className="top-4 left-4 absolute flex items-center">
           <AcmeLogo color="#252525" />
-          <p className="font-bold text-lg max-sm:hidden text-black">ACME</p>
+          <p className="max-sm:hidden font-bold text-black text-lg">ACME</p>
         </div>
         <img src={LoginBg} alt="" className="w-full h-full object-cover" />
       </div>
-      <div className="flex items-center justify-center px-4 sm:px-6 max-w-6xl flex-1">
-        <div className="md:pt-24 pb-12 md:pb-20 w-full flex flex-col gap-4 items-center justify-center h-screen md:h-fit">
+      <div className="flex flex-1 justify-center items-center px-4 sm:px-6 max-w-6xl">
+        <div className="flex flex-col justify-center items-center gap-4 md:pt-24 pb-12 md:pb-20 w-full h-screen md:h-fit">
           {/* Form */}
           <div className="flex items-center md:hidden">
             <AcmeLogo />

@@ -53,12 +53,12 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
 
   const style = {
     backgroundColor:
-      desk?.ownerId === user?.id
+      !desk?.isBookedByMe && desk?.bookings?.length
+        ? '#f31260'
+        : desk?.ownerId === user?.id
         ? '#006FEE'
         : desk?.isBookedByMe
         ? '#006FEE'
-        : !desk?.isBookedByMe && desk?.bookings?.length
-        ? '#f31260'
         : desk?.ownerId && !desk?.isBookingAllowedByOwner
         ? '#f31260'
         : desk?.ownerId && !desk?.bookings?.length
@@ -176,8 +176,11 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
           if (isOwnedByMe && !isBookingAllowedByOwner) {
             return;
           }
-          // If the desk is owned by me, or it is owned by another person but booking is allowed, it can be selected
+          if (!desk?.isBookedByMe && desk?.bookings?.length) {
+            return;
+          }
           if (isOwnedByMe || (isOwnedByAnother && isBookingAllowedByOwner)) {
+            // If the desk is owned by me, or it is owned by another person but booking is allowed, it can be selected
             setSelectedDesk(desk);
             return;
           }

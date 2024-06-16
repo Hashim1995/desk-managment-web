@@ -48,7 +48,7 @@ function MobileBottomNavigation() {
   ];
 
   return (
-    <div className="bg-[#202735] flex items-center justify-between gap-4 border-t-1 z-10 border-blue200 py-2 px-8 w-full md:hidden  sticky bottom-0">
+    <div className="bottom-0 z-10 sticky flex justify-between items-center gap-4 md:hidden bg-[#202735] px-8 py-2 border-t-1 border-blue200 w-full">
       {navbarLinks.map(item => (
         <div
           key={item?.id}

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable no-use-before-define */
 /* eslint-disable radix */
 /* eslint-disable react/no-array-index-key */
@@ -23,7 +24,6 @@ import {
   DateRangePicker,
   RangeValue,
   useDisclosure,
-  ButtonGroup,
   Chip
 } from '@nextui-org/react';
 import { RoomsService } from '@/services/rooms-services/rooms-services';
@@ -218,6 +218,7 @@ export default function Home() {
   }
 
   useEffect(() => {
+    getRoomCompact();
     const perpx = 1.9 / 1920;
     const scaleCanvas = () => {
       if (canvasRef.current) {
@@ -250,18 +251,18 @@ export default function Home() {
     setSelectedDesk(null);
   }, [selectedRoom]);
   return (
-    <div className="flex flex-col min-w-[320px] justify-center items-center">
+    <div className="flex flex-col justify-center items-center min-w-[320px]">
       <Tabs
         size="sm"
         aria-label="Options"
+        variant="bordered"
+        color="default"
+        className="mt-5"
         selectedKey={selectedRoom}
         onSelectionChange={(e: number) => {
           setFilterDate(generateDates()[0]);
           setSelectedRoom(e);
         }}
-        variant="bordered"
-        color="default"
-        className="mt-5"
       >
         {roomList?.map(z => (
           <Tab key={z?.id} title={z?.name}>
@@ -271,9 +272,9 @@ export default function Home() {
                   <div className="flex max-[710px]:flex-col items-center gap-2">
                     <div className="w-full">
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
-                        {generateDates()?.map((date, index) => (
+                        {generateDates()?.map(date => (
                           <Button
-                            key={`${index}`}
+                            key={`${date}`}
                             onClick={() => handleFilterDateChange(date)}
                             className={`${
                               filterDate.day === date.day
@@ -340,30 +341,30 @@ export default function Home() {
                   </div>
                 )}
                 <div className="relative flex justify-center items-center mt-10">
-                  <div className="-top-5 sm:-top-8 ml-0 z-10 absolute sm:ml-16 flex gap-2">
+                  <div className="-top-5 sm:-top-8 z-10 absolute flex gap-2 ml-0 sm:ml-16">
                     <Chip
                       color="primary"
-                      className="rounded text-[10px] h-5 p-0 sm:h-fit sm:p-1 sm:text-sm"
+                      className="p-0 sm:p-1 rounded h-5 sm:h-fit text-[10px] sm:text-sm"
                     >
                       {' '}
                       My bookings
                     </Chip>
                     <Chip
                       color="success"
-                      className="rounded text-white text-[10px] h-5 p-0 sm:h-fit sm:p-1 sm:text-sm"
+                      className="p-0 sm:p-1 rounded h-5 sm:h-fit text-[10px] text-white sm:text-sm"
                     >
                       Free
                     </Chip>
                     <Chip
                       color="default"
-                      className="rounded text-[10px] h-5 p-0 sm:h-fit sm:p-1 sm:text-sm"
+                      className="p-0 sm:p-1 rounded h-5 sm:h-fit text-[10px] sm:text-sm"
                     >
                       {' '}
                       Assigned to someone
                     </Chip>
                     <Chip
                       color="danger"
-                      className="rounded text-[10px] h-5 p-0 sm:h-fit sm:p-1 sm:text-sm"
+                      className="p-0 sm:p-1 rounded h-5 sm:h-fit text-[10px] sm:text-sm"
                     >
                       Booked
                     </Chip>
@@ -375,7 +376,7 @@ export default function Home() {
                       backgroundRepeat: 'no-repeat',
                       transformOrigin: 'top'
                     }}
-                    className="relative bg-gray-100 border w-[1000px] min-w-[320px] min-h-[320px] h-[900px] overflow-hidden"
+                    className="relative bg-gray-100 border w-[1000px] min-w-[320px] h-[900px] min-h-[320px] overflow-hidden"
                   >
                     <img
                       alt=""
