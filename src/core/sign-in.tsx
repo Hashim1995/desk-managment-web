@@ -23,6 +23,8 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import useDarkMode from 'use-dark-mode';
 import { useLocalStorage } from 'usehooks-ts';
+import LoginBg from '@assets/images/login-bg.png';
+import { AcmeLogo } from './logo';
 
 function SignIn() {
   const { t } = useTranslation();
@@ -70,10 +72,21 @@ function SignIn() {
   };
 
   return (
-    <section className="flex flex-col h-auto min-h-screen">
-      <div className="mx-auto px-4 sm:px-6 max-w-6xl">
-        <div className="pt-32 md:pt-24 pb-12 md:pb-20">
+    <section className="flex">
+      <div className="md:block relative flex-1 hidden h-screen">
+        <div className="top-4 left-4 absolute flex items-center">
+          <AcmeLogo color="#252525" />
+          <p className="max-sm:hidden font-bold text-black text-lg">ACME</p>
+        </div>
+        <img src={LoginBg} alt="" className="w-full h-full object-cover" />
+      </div>
+      <div className="flex flex-1 justify-center items-center px-4 sm:px-6 max-w-6xl">
+        <div className="flex flex-col justify-center items-center gap-4 md:pt-24 pb-12 md:pb-20 w-full h-screen md:h-fit">
           {/* Form */}
+          <div className="flex items-center md:hidden">
+            <AcmeLogo />
+            <p className="font-bold text-inherit text-lg">ACME</p>
+          </div>
           <div className="mx-auto w-full max-w-sm">
             {/* <GoogleLogin
               onSuccess={credentialResponse => {

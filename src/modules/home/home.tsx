@@ -18,7 +18,6 @@ import {
   DateRangePicker,
   RangeValue,
   useDisclosure,
-  ButtonGroup,
   Chip
 } from '@nextui-org/react';
 import { RoomsService } from '@/services/rooms-services/rooms-services';
@@ -245,14 +244,14 @@ export default function Home() {
 
   useEffect(() => {
     getRoomCompact();
-
     const perpx = 1.9 / 1920;
     const scaleCanvas = () => {
       if (canvasRef.current) {
         const screenWidth = window.innerWidth;
-        if (screenWidth < 800) {
+        if (screenWidth < 1030) {
           const ratio = perpx * screenWidth;
           canvasRef.current.style.transform = `scale(${ratio})`;
+          canvasRef.current.style.transformOrigin = 'top';
         } else {
           canvasRef.current.style.transform = 'none';
         }
@@ -273,10 +272,13 @@ export default function Home() {
   }, [selectedRoom]);
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center min-w-[320px]">
       <Tabs
-        size="lg"
+        size="sm"
         aria-label="Options"
+        variant="bordered"
+        color="default"
+        className="mt-5"
         selectedKey={selectedRoom}
         onSelectionChange={(e: number) => {
           setFilterDate(generateDates()[0]);
@@ -288,20 +290,24 @@ export default function Home() {
             {!isSubmitting ? (
               <div className="min-h-screen">
                 <div className="flex flex-col items-center p-4">
-                  <div className="flex items-center gap-2">
-                    <ButtonGroup>
-                      {generateDates()?.map(date => (
-                        <Button
-                          key={`${date}`}
-                          color={
-                            filterDate.day === date.day ? 'primary' : 'default'
-                          }
-                          onClick={() => handleFilterDateChange(date)}
-                        >
-                          {`${date.day}/${date.month}/${date.year}`}
-                        </Button>
-                      ))}
-                    </ButtonGroup>
+                  <div className="flex max-[710px]:flex-col items-center gap-2">
+                    <div className="w-full">
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+                        {generateDates()?.map(date => (
+                          <Button
+                            key={`${date}`}
+                            onClick={() => handleFilterDateChange(date)}
+                            className={`${
+                              filterDate.day === date.day
+                                ? 'bg-[#333a4a]'
+                                : 'bg-transparent'
+                            }`}
+                          >
+                            {`${date.day}/${date.month}/${date.year}`}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
                     <DatePicker
                       hourCycle={24}
                       onChange={handleFilterDateChange}
@@ -311,6 +317,7 @@ export default function Home() {
                         e.preventDefault();
                       }}
                       minValue={today(getLocalTimeZone())}
+                      className="w-72"
                     />
                   </div>
                 </div>
@@ -361,19 +368,42 @@ export default function Home() {
                   </div>
                 )}
                 <div className="relative flex justify-center items-center mt-10">
-                  <div className="-top-3 z-10 absolute flex gap-2">
-                    <Chip color="primary"> My bookings</Chip>
-                    <Chip color="success">Free</Chip>
-                    <Chip color="default"> Assigned to someone</Chip>
-                    <Chip color="danger">Booked</Chip>
+                  <div className="-top-5 sm:-top-8 z-10 absolute flex gap-2 ml-0 sm:ml-16">
+                    <Chip
+                      color="primary"
+                      className="p-0 sm:p-1 rounded h-5 sm:h-fit text-[10px] sm:text-sm"
+                    >
+                      {' '}
+                      My bookings
+                    </Chip>
+                    <Chip
+                      color="success"
+                      className="p-0 sm:p-1 rounded h-5 sm:h-fit text-[10px] text-white sm:text-sm"
+                    >
+                      Free
+                    </Chip>
+                    <Chip
+                      color="default"
+                      className="p-0 sm:p-1 rounded h-5 sm:h-fit text-[10px] sm:text-sm"
+                    >
+                      {' '}
+                      Assigned to someone
+                    </Chip>
+                    <Chip
+                      color="danger"
+                      className="p-0 sm:p-1 rounded h-5 sm:h-fit text-[10px] sm:text-sm"
+                    >
+                      Booked
+                    </Chip>
                   </div>
                   <div
                     id="canvas"
                     ref={canvasRef}
                     style={{
-                      backgroundRepeat: 'no-repeat'
+                      backgroundRepeat: 'no-repeat',
+                      transformOrigin: 'top'
                     }}
-                    className="relative bg-gray-100 border w-[1000px] h-[1000px] overflow-scroll"
+                    className="relative bg-gray-100 border w-[1000px] min-w-[320px] h-[900px] min-h-[320px] overflow-hidden"
                   >
                     <img
                       alt=""
