@@ -20,11 +20,7 @@ import { format, parseISO } from 'date-fns';
 import AppHandledBorderedButton from '@/components/forms/button/app-handled-bordered-button';
 import AppHandledSolidButton from '@/components/forms/button/app-handled-solid-button';
 import AppHandledDatePicker from '@/components/forms/date/app-handled-date-picker';
-import {
-  inputPlaceholderText,
-  selectPlaceholderText
-} from '@/utils/constants/texts';
-import AppHandledInput from '@/components/forms/input/handled-input';
+import { selectPlaceholderText } from '@/utils/constants/texts';
 import AppHandledSelect from '@/components/forms/select/handled-select';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { convertFormDataToQueryParams } from '@/utils/functions/functions';
@@ -47,6 +43,15 @@ function LeadsTable() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [tableLoading, setTableLoading] = useState(true);
   const [queryParams, setQueryParams] = useState<IHTTPSParams[]>([]);
+  const [desksList, setDesksList] = useState<{ name: string; id: number }[]>(
+    []
+  );
+  const [roomsList, setRoomsList] = useState<{ name: string; id: number }[]>(
+    []
+  );
+  const [ownersList, setOwnerssList] = useState<{ name: string; id: number }[]>(
+    []
+  );
   const [refreshComponent, setRefreshComponent] = useState<boolean>(false);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: null,
@@ -95,6 +100,28 @@ function LeadsTable() {
       if (res?.items) {
         setData(res);
         setTableLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  async function getLists() {
+    try {
+      const roomsService = RoomsService.getInstance();
+      const [desksRes, roomsRes, ownersRes] = await Promise.all([
+        roomsService.getDesksComboList(),
+        roomsService.getRoomsList(),
+        roomsService.getOwnerComboList()
+      ]);
+
+      if (desksRes) {
+        setDesksList(desksRes);
+      }
+      if (roomsRes) {
+        setRoomsList(roomsRes);
+      }
+      if (ownersRes) {
+        setOwnerssList(ownersRes);
       }
     } catch (err) {
       console.log(err);
@@ -155,7 +182,9 @@ function LeadsTable() {
         </TableCell>
       </TableRow>
     ));
-
+  useEffect(() => {
+    getLists();
+  }, []);
   return (
     <div className="flex justify-center w-full">
       <div className="flex flex-col gap-2 p-4 lg:p-6 w-full max-w-[1024px] h-full min-h-screen">
@@ -173,48 +202,50 @@ function LeadsTable() {
             <div className="left flex sm:flex-row flex-col gap-5 w-full">
               <div className="flex flex-col gap-5 w-full sm:w-1/2">
                 <div className="w-full">
-                  <AppHandledInput
-                    name="deskName"
-                    required={false}
-                    errors={errors}
-                    inputProps={{
-                      id: 'deskName'
+                  <AppHandledSelect
+                    name="deskId"
+                    selectProps={{
+                      id: 'deskId'
                     }}
-                    type="text"
-                    className="text-default-900 dark:text-white"
                     control={control}
-                    size="sm"
-                    label={inputPlaceholderText('Desk name')}
+                    label={selectPlaceholderText('Desk name')}
+                    options={
+                      desksList?.map(z => ({ value: z?.id, label: z?.name })) ||
+                      []
+                    }
+                    errors={errors}
                   />
                 </div>
                 <div className="w-full">
-                  <AppHandledInput
-                    name="roomName"
-                    required={false}
-                    errors={errors}
-                    inputProps={{
-                      id: 'roomName'
+                  <AppHandledSelect
+                    name="roomId"
+                    selectProps={{
+                      id: 'roomId'
                     }}
-                    type="text"
-                    className="text-default-900 dark:text-white"
                     control={control}
-                    size="sm"
-                    label={inputPlaceholderText('Room name')}
+                    label={selectPlaceholderText('Room name')}
+                    options={
+                      roomsList?.map(z => ({ value: z?.id, label: z?.name })) ||
+                      []
+                    }
+                    errors={errors}
                   />
                 </div>
                 <div className="w-full">
-                  <AppHandledInput
-                    name="deskOwnerName"
-                    required={false}
-                    errors={errors}
-                    inputProps={{
-                      id: 'deskOwnerName'
+                  <AppHandledSelect
+                    name="deskOwnerId"
+                    selectProps={{
+                      id: 'deskOwnerId'
                     }}
-                    type="text"
-                    className="text-default-900 dark:text-white"
                     control={control}
-                    size="sm"
-                    label={inputPlaceholderText('Desk owner name')}
+                    label={selectPlaceholderText('Desk owners')}
+                    options={
+                      ownersList?.map(z => ({
+                        value: z?.id,
+                        label: z?.name
+                      })) || []
+                    }
+                    errors={errors}
                   />
                 </div>
               </div>
