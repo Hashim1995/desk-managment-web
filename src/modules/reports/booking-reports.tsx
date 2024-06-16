@@ -113,163 +113,166 @@ function LeadsTable() {
     ));
 
   return (
-    <div className="flex flex-col gap-2 w-full h-full min-h-screen p-2 lg:p-6">
-      <div className="relative flex justify-between items-center pe-6">
-        <h3 className="font-semibold text-default-800 text-xl dark:text-white">
-          Reports 😎
-        </h3>
-      </div>
-      <form
-        id="account-form"
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex sm:flex-row flex-col justify-between gap-3 sm:gap-4 mb-3 w-full"
-      >
-        <div className="flex w-full">
-          <div className="left flex gap-5 w-full">
-            <div className="flex flex-col gap-5 w-1/2">
-              <div className="w-full">
-                <AppHandledInput
-                  name="deskName"
-                  required={false}
-                  errors={errors}
-                  inputProps={{
-                    id: 'deskName'
-                  }}
-                  type="text"
-                  className="text-default-900 dark:text-white"
-                  control={control}
-                  size="sm"
-                  label={inputPlaceholderText('Desk name')}
-                />
-              </div>
-              <div className="w-full">
-                <AppHandledInput
-                  name="roomName"
-                  required={false}
-                  errors={errors}
-                  inputProps={{
-                    id: 'roomName'
-                  }}
-                  type="text"
-                  className="text-default-900 dark:text-white"
-                  control={control}
-                  size="sm"
-                  label={inputPlaceholderText('Room name')}
-                />
-              </div>
-              <div className="w-full">
-                <AppHandledInput
-                  name="deskOwnerName"
-                  required={false}
-                  errors={errors}
-                  inputProps={{
-                    id: 'deskOwnerName'
-                  }}
-                  type="text"
-                  className="text-default-900 dark:text-white"
-                  control={control}
-                  size="sm"
-                  label={inputPlaceholderText('Desk owner name')}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-5 w-1/2">
-              <div className="w-full">
-                <AppHandledDatePicker
-                  name="bookingDate"
-                  selectProps={{
-                    id: 'bookingDate'
-                  }}
-                  control={control}
-                  label={selectPlaceholderText('Date')}
-                  // className="app-select text-base sm:text-xl"
-
-                  errors={errors}
-                />
-              </div>
-              <div className="w-full">
-                <AppHandledSelect
-                  name="operationType"
-                  selectProps={{
-                    id: 'operationType'
-                  }}
-                  control={control}
-                  label={selectPlaceholderText('Operation type')}
-                  options={[
-                    {
-                      value: 1,
-                      label: 'Booking'
-                    },
-                    {
-                      value: 2,
-                      label: 'Cancel'
-                    }
-                  ]}
-                  errors={errors}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="right flex flex-col items-end gap-2 w-40">
-            <AppHandledSolidButton type="submit">
-              <MdSearch size={21} />
-            </AppHandledSolidButton>
-            <AppHandledBorderedButton
-              type="button"
-              onClick={() => {
-                reset();
-                setCurrentPage(1);
-                setQueryParams([]);
-                setRefreshComponent(r => !r);
-              }}
-            >
-              <MdRefresh size={20} />
-            </AppHandledBorderedButton>
-          </div>
+    <div className="flex justify-center w-full">
+      <div className="flex flex-col gap-2 w-full h-full min-h-screen p-4 lg:p-6 max-w-[1024px] ">
+        <div className="relative flex justify-between items-center pe-6">
+          <h3 className="font-semibold text-default-800 text-xl dark:text-white">
+            Reports 😎
+          </h3>
         </div>
-      </form>
-      <div className="border-1 border-divider bg-transparent shadow-lg p-6 rounded-2xl w-full">
-        <Table
-          color="default"
-          removeWrapper
-          classNames={{
-            thead: '!bg-transparent',
-            tr: '!bg-transparent',
-            th: '!bg-transparent',
-            td: '!py-5'
-          }}
-          aria-label="Example static collection table"
-          bottomContent={
-            <div className="flex justify-center w-full">
-              {data?.totalCount > 10 ? (
-                <Pagination
-                  isCompact
-                  color="default"
-                  showControls
-                  total={Math.ceil(data?.totalCount / 10)}
-                  page={currentPage}
-                  onChange={page => setCurrentPage(page)}
-                />
-              ) : null}
-            </div>
-          }
+        <form
+          id="account-form"
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex sm:flex-row flex-col justify-between gap-3 sm:gap-4 mb-3 w-full"
         >
-          <TableHeader>
-            <TableColumn>Desk name</TableColumn>
-            <TableColumn>Desk owner</TableColumn>
-            <TableColumn>Room Name</TableColumn>
-            <TableColumn>Operation type</TableColumn>
-            <TableColumn>Start Date</TableColumn>
-            <TableColumn>End Date</TableColumn>
-          </TableHeader>
-          <TableBody
-            emptyContent={<Empty />}
-            isLoading={tableLoading}
-            loadingContent={<Spinner />}
+          <div className="flex flex-col md:flex-row w-full">
+            <div className="left flex flex-col sm:flex-row gap-5 w-full">
+              <div className="flex flex-col gap-5 w-full sm:w-1/2">
+                <div className="w-full">
+                  <AppHandledInput
+                    name="deskName"
+                    required={false}
+                    errors={errors}
+                    inputProps={{
+                      id: 'deskName'
+                    }}
+                    type="text"
+                    className="text-default-900 dark:text-white"
+                    control={control}
+                    size="sm"
+                    label={inputPlaceholderText('Desk name')}
+                  />
+                </div>
+                <div className="w-full">
+                  <AppHandledInput
+                    name="roomName"
+                    required={false}
+                    errors={errors}
+                    inputProps={{
+                      id: 'roomName'
+                    }}
+                    type="text"
+                    className="text-default-900 dark:text-white"
+                    control={control}
+                    size="sm"
+                    label={inputPlaceholderText('Room name')}
+                  />
+                </div>
+                <div className="w-full">
+                  <AppHandledInput
+                    name="deskOwnerName"
+                    required={false}
+                    errors={errors}
+                    inputProps={{
+                      id: 'deskOwnerName'
+                    }}
+                    type="text"
+                    className="text-default-900 dark:text-white"
+                    control={control}
+                    size="sm"
+                    label={inputPlaceholderText('Desk owner name')}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col gap-5 w-full sm:w-1/2">
+                <div className="w-full">
+                  <AppHandledDatePicker
+                    name="bookingDate"
+                    selectProps={{
+                      id: 'bookingDate'
+                    }}
+                    control={control}
+                    label={selectPlaceholderText('Date')}
+                    // className="app-select text-base sm:text-xl"
+
+                    errors={errors}
+                  />
+                </div>
+                <div className="w-full">
+                  <AppHandledSelect
+                    name="operationType"
+                    selectProps={{
+                      id: 'operationType'
+                    }}
+                    control={control}
+                    label={selectPlaceholderText('Operation type')}
+                    options={[
+                      {
+                        value: 1,
+                        label: 'Booking'
+                      },
+                      {
+                        value: 2,
+                        label: 'Cancel'
+                      }
+                    ]}
+                    errors={errors}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 md:mt-0 md:right flex md:flex-col items-start md:items-end gap-2 w-40">
+              <AppHandledSolidButton type="submit">
+                <MdSearch size={21} />
+              </AppHandledSolidButton>
+              <AppHandledBorderedButton
+                type="button"
+                onClick={() => {
+                  reset();
+                  setCurrentPage(1);
+                  setQueryParams([]);
+                  setRefreshComponent(r => !r);
+                }}
+              >
+                <MdRefresh size={20} />
+              </AppHandledBorderedButton>
+            </div>
+          </div>
+        </form>
+        <div className="border-1 border-divider bg-transparent shadow-lg p-6 rounded-2xl w-full">
+          <Table
+            className="overflow-x-auto overflow-y-hidden"
+            color="default"
+            removeWrapper
+            classNames={{
+              thead: '!bg-transparent',
+              tr: '!bg-transparent',
+              th: '!bg-transparent',
+              td: '!py-5'
+            }}
+            aria-label="Example static collection table"
+            bottomContent={
+              <div className="flex justify-center w-full">
+                {data?.totalCount > 10 ? (
+                  <Pagination
+                    isCompact
+                    color="default"
+                    showControls
+                    total={Math.ceil(data?.totalCount / 10)}
+                    page={currentPage}
+                    onChange={page => setCurrentPage(page)}
+                  />
+                ) : null}
+              </div>
+            }
           >
-            {renderRows()}
-          </TableBody>
-        </Table>
+            <TableHeader>
+              <TableColumn>Desk name</TableColumn>
+              <TableColumn>Desk owner</TableColumn>
+              <TableColumn>Room Name</TableColumn>
+              <TableColumn>Operation type</TableColumn>
+              <TableColumn>Start Date</TableColumn>
+              <TableColumn>End Date</TableColumn>
+            </TableHeader>
+            <TableBody
+              emptyContent={<Empty />}
+              isLoading={tableLoading}
+              loadingContent={<Spinner />}
+            >
+              {renderRows()}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );

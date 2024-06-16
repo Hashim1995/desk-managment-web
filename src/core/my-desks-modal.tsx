@@ -1,18 +1,14 @@
-import { useTranslation } from 'react-i18next';
-
 import {
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   Divider,
   Spinner,
   Listbox,
   ListboxItem,
   Switch
 } from '@nextui-org/react';
-import AppHandledBorderedButton from '@/components/forms/button/app-handled-bordered-button';
 import { useEffect, useState } from 'react';
 import { RoomsService } from '@/services/rooms-services/rooms-services';
 import { IOwnedDesks } from '@/modules/home/types';
@@ -24,7 +20,6 @@ interface IMyDesksModal {
 }
 
 function MyDesksModal({ isOpen, onOpenChange }: IMyDesksModal) {
-  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [myDesks, setMyDesks] = useState<IOwnedDesks[]>([]);
 
@@ -56,7 +51,7 @@ function MyDesksModal({ isOpen, onOpenChange }: IMyDesksModal) {
     getMyDesks();
   }, []);
   return (
-    <div>
+    <div className="z-50">
       <Modal
         size="lg"
         isDismissable={false}
@@ -66,63 +61,50 @@ function MyDesksModal({ isOpen, onOpenChange }: IMyDesksModal) {
         onOpenChange={onOpenChange}
       >
         <ModalContent>
-          {onClose => (
-            <>
-              <ModalHeader className="flex flex-col gap-1 pr-10 text-default-800 dark:text-white">
-                Settings
-              </ModalHeader>
-              <Divider className="mb-6" />
+          <>
+            <ModalHeader className="flex flex-col gap-1 pr-10 text-default-800 dark:text-white">
+              Settings
+            </ModalHeader>
+            <Divider className="mb-6" />
 
-              <ModalBody className="text-default-800 dark:text-white">
-                {!loading ? (
-                  <div className="border-default-200 border-small dark:border-default-100 px-1 py-2 rounded-small w-full">
-                    {myDesks?.length ? (
-                      <Listbox aria-label="Actions">
-                        {myDesks?.map((z: IOwnedDesks) => (
-                          <ListboxItem key={z?.deskId}>
-                            <div className="flex justify-between items-center gap-1">
-                              <p className="w-1/2">Room name:</p>
-                              <p className="w-1/2">{z?.roomName}</p>
-                            </div>
-                            <div className="flex justify-between items-center gap-1">
-                              <p className="w-1/2">Desk name:</p>
-                              <p className="w-1/2">{z?.name}</p>
-                            </div>
-                            <div className="flex justify-between items-center gap-1 mt-2">
-                              <p className="w-1/2">Allow for book:</p>
-                              <p className="w-1/2">
-                                <Switch
-                                  size="sm"
-                                  onChange={() => swtichStatus(z?.deskId)}
-                                  defaultSelected={z?.isBookingAllowedByOwner}
-                                  aria-label="Automatic updates"
-                                />
-                              </p>
-                            </div>
-                          </ListboxItem>
-                        ))}
-                      </Listbox>
-                    ) : (
-                      <Empty />
-                    )}
-                  </div>
-                ) : (
-                  <Spinner size="lg" />
-                )}
-              </ModalBody>
-              <ModalFooter>
-                <AppHandledBorderedButton
-                  buttonProps={{
-                    title: 'Close Modal',
-                    'aria-label': 'Close Modal'
-                  }}
-                  onPress={onClose}
-                >
-                  {t('closeBtn')}
-                </AppHandledBorderedButton>
-              </ModalFooter>
-            </>
-          )}
+            <ModalBody className="text-default-800 dark:text-white">
+              {!loading ? (
+                <div className="border-default-200 border-small dark:border-default-100 px-1 py-2 rounded-small w-full">
+                  {myDesks?.length ? (
+                    <Listbox aria-label="Actions">
+                      {myDesks?.map((z: IOwnedDesks) => (
+                        <ListboxItem key={z?.deskId}>
+                          <div className="flex justify-between items-center gap-1 w-full">
+                            <p>Room name:</p>
+                            <p>{z?.roomName}</p>
+                          </div>
+                          <div className="flex justify-between items-center gap-1">
+                            <p>Desk name:</p>
+                            <p>{z?.name}</p>
+                          </div>
+                          <div className="flex justify-between items-center gap-1 mt-2">
+                            <p>Allow for book:</p>
+                            <p>
+                              <Switch
+                                size="sm"
+                                onChange={() => swtichStatus(z?.deskId)}
+                                defaultSelected={z?.isBookingAllowedByOwner}
+                                aria-label="Automatic updates"
+                              />
+                            </p>
+                          </div>
+                        </ListboxItem>
+                      ))}
+                    </Listbox>
+                  ) : (
+                    <Empty />
+                  )}
+                </div>
+              ) : (
+                <Spinner size="lg" />
+              )}
+            </ModalBody>
+          </>
         </ModalContent>
       </Modal>
     </div>

@@ -1,12 +1,17 @@
-/* eslint-disable prefer-const */
+/* eslint-disable no-use-before-define */
+/* eslint-disable radix */
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable no-shadow */
+/* eslint-disable no-unused-vars */
 import {
   today,
   getLocalTimeZone,
   ZonedDateTime,
-  now
+  now,
+  parseAbsoluteToLocal,
+  Time
 } from '@internationalized/date';
-import { format, isToday, parseISO } from 'date-fns';
+import { format, formatISO, sub } from 'date-fns';
 import { useState, useEffect, useRef } from 'react';
 import {
   Tabs,
@@ -25,13 +30,14 @@ import { RoomsService } from '@/services/rooms-services/rooms-services';
 import AppHandledBorderedButton from '@/components/forms/button/app-handled-bordered-button';
 import { tokenizeImage } from '@/utils/functions/functions';
 import DeskItem from './desk-item';
-import { IDesk } from './types';
+import { IRoomByIdResponse, IDesk } from './types';
 import DeleteMultiBookingModal from './delete-multi-booking';
 
 const generateDates = (): ZonedDateTime[] => {
   const today = now(getLocalTimeZone());
   return Array.from({ length: 7 }, (_, i) => today.add({ days: i }));
 };
+
 const formatToISO8601 = (zonedDateTime: ZonedDateTime) => {
   const { year, month, day, hour, minute, second } = zonedDateTime;
   const date = new Date(year, month - 1, day, hour, minute, second);
@@ -52,34 +58,6 @@ const getEndOfDay = (zonedDateTime: ZonedDateTime): ZonedDateTime => {
     zonedDateTime.second
   );
 };
-function extractDate(input: string): string {
-  const dateMatch = input.match(/\d{4}-\d{2}-\d{2}/);
-  return dateMatch ? dateMatch[0] : 'Invalid Date';
-}
-
-function formatDates(
-  start: string,
-  end: string
-): { startDate: string; endDate: string } {
-  const startDateString = extractDate(start);
-  const endDateString = extractDate(end);
-  const startDate = parseISO(startDateString);
-  const endDate = parseISO(endDateString);
-
-  let formattedStartDate: string;
-  let formattedEndDate: string;
-
-  if (isToday(startDate)) {
-    formattedStartDate = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
-  } else {
-    formattedStartDate = format(startDate, "yyyy-MM-dd'T'00:00:00");
-  }
-  formattedEndDate = format(endDate, "yyyy-MM-dd'T'23:59:00");
-  return {
-    startDate: formattedStartDate,
-    endDate: formattedEndDate
-  };
-}
 
 export default function Home() {
   const {
@@ -152,6 +130,8 @@ export default function Home() {
     const timeZone = getLocalTimeZone();
     let hour = 0;
     let minute = 0;
+    let endHour = 23;
+    let endMinute = 59;
 
     const todayDate = today(timeZone);
     if (
@@ -165,7 +145,10 @@ export default function Home() {
     } else {
       hour = 0;
       minute = 0;
+      endHour = 23;
+      endMinute = 59;
     }
+
     const startZonedDate = new ZonedDateTime(
       newDate.year,
       newDate.month,
@@ -177,46 +160,38 @@ export default function Home() {
       newDate.second,
       newDate.millisecond
     );
+    const endZonedDate = new ZonedDateTime(
+      newDate.year,
+      newDate.month,
+      newDate.day,
+      timeZone,
+      0,
+      endHour,
+      endMinute,
+      newDate.second,
+      newDate.millisecond
+    );
 
     setFilterDate(startZonedDate);
-    const startZonedDateForSubmit = new ZonedDateTime(
-      newDate.year,
-      newDate.month,
-      newDate.day,
-      timeZone,
-      0,
-      0,
-      0,
-      0
-    );
-
-    const ForSubmit = new ZonedDateTime(
-      newDate.year,
-      newDate.month,
-      newDate.day,
-      timeZone,
-      23,
-      59,
-      59,
-      0
-    );
-
-    setSubmitDate({ start: startZonedDateForSubmit, end: ForSubmit });
+    setSubmitDate({
+      start: startZonedDate,
+      end: endZonedDate
+    });
   };
 
   async function bookDesk() {
     setbtnLoading(true);
 
-    const { startDate, endDate } = formatDates(
-      submitDate.start?.toString(),
-      submitDate.end?.toString()
-    );
+    const startDateTime = new Date(submitDate.start.toString());
+    const endDateTime = new Date(submitDate.end.toString());
 
+    console.log(startDateTime, 'salam-start');
+    console.log(endDateTime, 'salam-start');
     try {
       const res = await RoomsService.getInstance().bookDesk({
         deskId: selectedDesk?.deskId,
-        startDate,
-        endDate
+        startDate: 1, // Pass Date object directly
+        endDate: 2 // Pass Date object directly
       });
       if (res) {
         setRefreshComponent(z => !z);
@@ -234,7 +209,6 @@ export default function Home() {
         selectedDesk?.bookings[0]?.bookingId
       );
       if (res) {
-        setSelectedDesk(null);
         setRefreshComponent(z => !z);
       }
     } catch (err) {
@@ -244,15 +218,14 @@ export default function Home() {
   }
 
   useEffect(() => {
-    getRoomCompact();
-
     const perpx = 1.9 / 1920;
     const scaleCanvas = () => {
       if (canvasRef.current) {
         const screenWidth = window.innerWidth;
-        if (screenWidth < 900) {
+        if (screenWidth < 1030) {
           const ratio = perpx * screenWidth;
           canvasRef.current.style.transform = `scale(${ratio})`;
+          canvasRef.current.style.transformOrigin = 'top';
         } else {
           canvasRef.current.style.transform = 'none';
         }
@@ -261,6 +234,7 @@ export default function Home() {
     scaleCanvas();
     window.addEventListener('resize', scaleCanvas);
 
+    // Cleanup the event listener when the component unmounts
     return () => window.removeEventListener('resize', scaleCanvas);
   }, []);
 
@@ -269,55 +243,62 @@ export default function Home() {
   }, [selectedRoom, refreshComponent, filterDate]);
 
   useEffect(() => {
+    getRoomCompact();
+  }, []);
+
+  useEffect(() => {
     setSelectedDesk(null);
   }, [selectedRoom]);
-
   return (
     <div className="flex flex-col min-w-[320px] justify-center items-center">
       <Tabs
-        size="lg"
+        size="sm"
         aria-label="Options"
         selectedKey={selectedRoom}
         onSelectionChange={(e: number) => {
           setFilterDate(generateDates()[0]);
           setSelectedRoom(e);
         }}
+        variant="bordered"
+        color="default"
+        className="mt-5"
       >
         {roomList?.map(z => (
           <Tab key={z?.id} title={z?.name}>
             {!isSubmitting ? (
               <div className="min-h-screen flex flex-col gap-8 ">
                 <div className="flex flex-col items-center p-4">
-                  <div className="flex max-sm:flex-col items-center justify-between gap-2">
-                    <ButtonGroup>
-                      {generateDates()?.map(date => (
-                        <Button
-                          key={`${date}`}
-                          color={
-                            filterDate.day === date.day ? 'primary' : 'default'
-                          }
-                          onClick={() => handleFilterDateChange(date)}
-                          className="flex-shrink-0"
-                        >
-                          {`${date.day}/${date.month}/${date.year}`}
-                        </Button>
-                      ))}
-                    </ButtonGroup>
+                  <div className="flex max-[710px]:flex-col items-center gap-2">
+                    <div className="w-full">
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+                        {generateDates()?.map((date, index) => (
+                          <Button
+                            key={`${index}`}
+                            onClick={() => handleFilterDateChange(date)}
+                            className={`${
+                              filterDate.day === date.day
+                                ? 'bg-[#333a4a]'
+                                : 'bg-transparent'
+                            }`}
+                          >
+                            {`${date.day}/${date.month}/${date.year}`}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
                     <DatePicker
                       hourCycle={24}
                       onChange={handleFilterDateChange}
                       granularity="day"
                       value={filterDate}
-                      onKeyDown={e => {
-                        e.preventDefault();
-                      }}
                       minValue={today(getLocalTimeZone())}
+                      className="w-72"
                     />
                   </div>
                 </div>
 
                 {selectedDesk && (
-                  <div className="flex justify-between items-center gap-4 mt-2 w-full">
+                  <div className="flex justify-between items-center gap-4 mt-10 w-full">
                     <DateRangePicker
                       aria-label="Date (Controlled)"
                       value={submitDate}
@@ -326,9 +307,6 @@ export default function Home() {
                       hourCycle={24}
                       minValue={today(getLocalTimeZone())}
                       size="lg"
-                      onKeyDown={e => {
-                        e.preventDefault();
-                      }}
                       visibleMonths={2}
                       calendarWidth={900}
                     />
@@ -361,32 +339,44 @@ export default function Home() {
                     )}
                   </div>
                 )}
-                <div className="relative flex justify-center items-center  ">
+                <div className="relative flex justify-center items-center mt-10">
+                  <div className="-top-5 sm:-top-8 ml-0 z-10 absolute sm:ml-16 flex gap-2">
+                    <Chip
+                      color="primary"
+                      className="rounded text-[10px] h-5 p-0 sm:h-fit sm:p-1 sm:text-sm"
+                    >
+                      {' '}
+                      My bookings
+                    </Chip>
+                    <Chip
+                      color="success"
+                      className="rounded text-white text-[10px] h-5 p-0 sm:h-fit sm:p-1 sm:text-sm"
+                    >
+                      Free
+                    </Chip>
+                    <Chip
+                      color="default"
+                      className="rounded text-[10px] h-5 p-0 sm:h-fit sm:p-1 sm:text-sm"
+                    >
+                      {' '}
+                      Assigned to someone
+                    </Chip>
+                    <Chip
+                      color="danger"
+                      className="rounded text-[10px] h-5 p-0 sm:h-fit sm:p-1 sm:text-sm"
+                    >
+                      Booked
+                    </Chip>
+                  </div>
                   <div
                     id="canvas"
                     ref={canvasRef}
                     style={{
-                      backgroundRepeat: 'no-repeat'
+                      backgroundRepeat: 'no-repeat',
+                      transformOrigin: 'top'
                     }}
-                    className="relative bg-gray-100 border w-[1000px] min-w-[320px] min-h-[320px] h-[600px]l"
+                    className="relative bg-gray-100 border w-[1000px] min-w-[320px] min-h-[320px] h-[900px] overflow-hidden"
                   >
-                    <div className="-top-6 translate-x-1/3 z-10 absolute flex gap-2 text-white">
-                      <Chip className=" rounded-lg" color="primary">
-                        My bookings
-                      </Chip>
-                      <Chip className=" rounded-lg" color="secondary">
-                        Assigned to me
-                      </Chip>
-                      <Chip className="text-white rounded-lg" color="success">
-                        Free
-                      </Chip>
-                      <Chip className="text-white rounded-lg" color="warning">
-                        Assigned to someone
-                      </Chip>
-                      <Chip className=" rounded-lg" color="danger">
-                        Booked
-                      </Chip>
-                    </div>
                     <img
                       alt=""
                       src={photoUrl}

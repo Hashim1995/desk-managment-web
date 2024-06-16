@@ -21,7 +21,7 @@ export default {
   plugins: [
     require('@tailwindcss/line-clamp'),
     nextui({
-      defaultTheme: 'dark'
+      defaultTheme: 'dark',
 
       // themes: {
       //   light: {
@@ -50,13 +50,14 @@ export default {
       //       custom: 'red'
       //     }
       //   },
-      //   dark: {
-      //     colors: {
-      //       black: '#0F0F0F',
-      //       darkBlack: '#0F0F0F',
-      //       custom: 'red'
-      //     }
-      //   }
+      dark: {
+        colors: {
+          default: {
+            foreground: '#1f283e',
+            DEFAULT: '#1f283e'
+          }
+        }
+      }
       // }
     })
   ]

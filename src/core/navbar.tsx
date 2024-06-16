@@ -4,14 +4,18 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import {
+  Avatar,
   Button,
   ButtonGroup,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Navbar,
   useDisclosure,
   User
 } from '@nextui-org/react';
-import { IoCloseCircleOutline, IoLogOutOutline } from 'react-icons/io5';
-import { CiMenuFries } from 'react-icons/ci';
+import { IoLogOutOutline } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
 import { RootState } from '@/redux/store';
 import { t } from 'i18next';
@@ -25,7 +29,6 @@ import MyDesksModal from './my-desks-modal';
 export default function AppNavbar() {
   const { user } = useSelector((state: RootState) => state.user);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [isMobilMenuOpen, setIsMobilMenuOpen] = useState(false);
   const { pathname } = useLocation();
   const [photoUrl, setPhotoUrl] = useState<string>('');
 
@@ -51,7 +54,7 @@ export default function AppNavbar() {
   }, [user]);
   return (
     <Navbar className="gradient-bg">
-      <div className="z-10 max-w-6xl m-auto md:min-w-[320px] flex justify-between items-center gap-5 max-sm:gap-3 max-[350px]:gap-1 bg-transparent px-1 md:px-12 py-3 w-full">
+      <div className="z-10 max-w-6xl m-auto md:min-w-[320px] flex justify-between items-center gap-5 max-sm:gap-3 max-[350px]:gap-1 bg-transparent px-1 py-3 w-full">
         <div className="flex items-center ">
           <AcmeLogo />
           <p className="font-bold text-inherit text-lg max-sm:hidden">ACME</p>
@@ -63,7 +66,7 @@ export default function AppNavbar() {
               as={Link}
               to="/"
               className={`${
-                pathname === '/' && !isOpen ? 'bg-[#3f3f46]' : 'bg-transparent'
+                pathname === '/' && !isOpen ? 'bg-[#333a4a]' : 'bg-transparent'
               } dark:text-white max-sm:px-3 max-[350px]:px-2`}
               variant="light"
             >
@@ -74,7 +77,7 @@ export default function AppNavbar() {
               to="/reports"
               className={`${
                 pathname === '/reports' && !isOpen
-                  ? 'bg-[#3f3f46]'
+                  ? 'bg-[#333a4a]'
                   : 'bg-transparent'
               } dark:text-white max-sm:px-3 max-[350px]:px-2`}
               variant="light"
@@ -83,7 +86,7 @@ export default function AppNavbar() {
             </Button>
             <Button
               className={`${
-                isOpen ? 'bg-[#3f3f46]' : 'bg-transparent'
+                isOpen ? 'bg-[#333a4a]' : 'bg-transparent'
               } max-sm:px-3 max-[350px]:px-2`}
               variant="light"
               onClick={onOpen}
@@ -92,6 +95,7 @@ export default function AppNavbar() {
             </Button>
           </ButtonGroup>
         </div>
+
         <div className="justify-center hidden md:flex">
           <div className="flex items-center gap-2">
             <User
@@ -116,54 +120,24 @@ export default function AppNavbar() {
             />
           </div>
         </div>
-      </div>
 
-      <CiMenuFries
-        className="block md:hidden w-7 h-7 cursor-pointer"
-        onClick={() => setIsMobilMenuOpen(true)}
-      />
-
-      <div
-        className={`fixed top-0 ${
-          isMobilMenuOpen ? 'right-0' : '-right-96'
-        } gradient-bg w-96 py-4 z-50 h-screen transition-all`}
-      >
-        <div className="flex flex-col justify-center gap-4 max-sm:gap-2 md:hidden transition-all">
-          <IoCloseCircleOutline
-            className="w-8 h-8 cursor-pointer mb-10"
-            onClick={() => setIsMobilMenuOpen(false)}
-          />
-          <Button
-            as={Link}
-            to="/"
-            className={`${
-              pathname === '/' && !isOpen ? 'bg-[#3f3f46]' : 'bg-transparent'
-            } dark:text-white max-sm:px-3 max-[350px]:px-2`}
-            variant="light"
-          >
-            Booking
-          </Button>
-          <Button
-            as={Link}
-            to="/reports"
-            className={`${
-              pathname === '/reports' && !isOpen
-                ? 'bg-[#3f3f46]'
-                : 'bg-transparent'
-            } dark:text-white max-sm:px-3 max-[350px]:px-2`}
-            variant="light"
-          >
-            Reports
-          </Button>
-          <Button
-            className={`${
-              isOpen ? 'bg-[#3f3f46]' : 'bg-transparent'
-            } max-sm:px-3 max-[350px]:px-2`}
-            variant="light"
-            onClick={onOpen}
-          >
-            Settings
-          </Button>
+        <div className="block md:hidden">
+          <Dropdown>
+            <DropdownTrigger>
+              <Avatar isBordered src="" />
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Static Actions">
+              <DropdownItem
+                key="new"
+                onClick={() => {
+                  localStorage.removeItem('userToken');
+                  window.location.reload();
+                }}
+              >
+                Log out
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
       </div>
 
