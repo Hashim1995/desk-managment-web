@@ -110,7 +110,7 @@ function LeadsTable() {
       const roomsService = RoomsService.getInstance();
       const [desksRes, roomsRes, ownersRes] = await Promise.all([
         roomsService.getDesksComboList(),
-        roomsService.getRoomsList(),
+        roomsService.getRoomsComboList(),
         roomsService.getOwnerComboList()
       ]);
 

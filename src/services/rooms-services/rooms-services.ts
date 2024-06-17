@@ -20,7 +20,7 @@ export class RoomsService {
   // eslint-disable-next-line no-use-before-define
   private static instance: RoomsService | null;
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): RoomsService {
     if (!this.instance) {
@@ -94,7 +94,6 @@ export class RoomsService {
     const res = await HttpUtil.get(`/rooms/Compact`, null, false, onError);
     return res;
   }
-
 
   public async saveDesk(
     payload: { roomId: number; desks: IDesk[] },
