@@ -189,7 +189,7 @@ function SignIn() {
               >
                 {t('login')}
               </AppHandledSolidButton>
-              <div className="flex justify-center items-center">
+              {/* <div className="flex justify-center items-center">
                 <GoogleLogin
                   width="100%"
                   size="large"
@@ -201,7 +201,7 @@ function SignIn() {
                     console.log('Login Failed');
                   }}
                 />
-              </div>
+              </div> */}
             </form>
           </div>
         </div>
