@@ -26,6 +26,7 @@ interface IDesk {
   bookings: IDeskBookings[];
   releases: [];
   backgroundColor?: string;
+  recentlyBooked: boolean;
 }
 interface IOwnedDesks
   extends Omit<IDesk, 'ownerName' | 'bookings' | 'releases'> {

@@ -129,6 +129,7 @@ export default function Home() {
       ]);
       if (res?.roomId) {
         setDeskList(res?.desks);
+        res?.desks?.map(z => z?.recentlyBooked && setSelectedDesk(z));
         res?.photoFileId && fetchTokenizedImage(res?.photoFileId?.toString());
         setIsSubmitting(false);
       }
@@ -322,7 +323,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                {selectedDesk && (
+                {selectedDesk ? (
                   <div className="flex md:flex-row flex-col justify-between items-center gap-4 m-auto mt-4 md:mt-10 w-[300px] md:w-[600px]">
                     <DateRangePicker
                       aria-label="Date (Controlled)"
@@ -352,7 +353,7 @@ export default function Home() {
                           }
                         }}
                       >
-                        Cancel Desk
+                        Cancel - {selectedDesk?.name}
                       </AppHandledBorderedButton>
                     ) : (
                       <AppHandledBorderedButton
@@ -366,7 +367,7 @@ export default function Home() {
                       </AppHandledBorderedButton>
                     )}
                   </div>
-                )}
+                ) : null}
                 <div className="relative flex justify-center items-center mt-10">
                   <div className="-top-5 sm:-top-8 z-10 absolute flex gap-2 ml-0 sm:ml-16">
                     <Chip
