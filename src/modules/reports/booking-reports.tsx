@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-shadow */
 import {
@@ -21,9 +22,10 @@ import AppHandledBorderedButton from '@/components/forms/button/app-handled-bord
 import AppHandledSolidButton from '@/components/forms/button/app-handled-solid-button';
 import AppHandledDatePicker from '@/components/forms/date/app-handled-date-picker';
 import { selectPlaceholderText } from '@/utils/constants/texts';
-import AppHandledSelect from '@/components/forms/select/handled-select';
+import AppHandledAutocomplete from '@/components/forms/autocomplete/autocomplete';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { convertFormDataToQueryParams } from '@/utils/functions/functions';
+import { IoCloseOutline } from 'react-icons/io5';
 import { IHTTPSParams } from '@/services/adapter-config/config';
 import { IBookingReportsResponse, IReportFilter, IReportItem } from './types';
 
@@ -60,6 +62,8 @@ function LeadsTable() {
 
   const {
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
     control,
     reset
@@ -172,13 +176,11 @@ function LeadsTable() {
         </TableCell>
         <TableCell>
           {item.startDate
-            ? format(parseISO(item.startDate), 'dd.MM.yyyy HH:mm')
+            ? format(parseISO(item.startDate), 'dd.MM.yyyy')
             : '-'}
         </TableCell>
         <TableCell>
-          {item.endDate
-            ? format(parseISO(item.endDate), 'dd.MM.yyyy HH:mm')
-            : '-'}
+          {item.endDate ? format(parseISO(item.endDate), 'dd.MM.yyyy') : '-'}
         </TableCell>
       </TableRow>
     ));
@@ -202,7 +204,7 @@ function LeadsTable() {
             <div className="left flex sm:flex-row flex-col gap-5 w-full">
               <div className="flex flex-col gap-5 w-full sm:w-1/2">
                 <div className="w-full">
-                  <AppHandledSelect
+                  <AppHandledAutocomplete
                     name="deskId"
                     selectProps={{
                       id: 'deskId'
@@ -217,7 +219,7 @@ function LeadsTable() {
                   />
                 </div>
                 <div className="w-full">
-                  <AppHandledSelect
+                  <AppHandledAutocomplete
                     name="roomId"
                     selectProps={{
                       id: 'roomId'
@@ -232,7 +234,7 @@ function LeadsTable() {
                   />
                 </div>
                 <div className="w-full">
-                  <AppHandledSelect
+                  <AppHandledAutocomplete
                     name="deskOwnerId"
                     selectProps={{
                       id: 'deskOwnerId'
@@ -254,6 +256,12 @@ function LeadsTable() {
                   <AppHandledDatePicker
                     name="startDate"
                     selectProps={{
+                      startContent: watch('startDate') && (
+                        <IoCloseOutline
+                          onClick={() => setValue('startDate', null)}
+                          className="cursor-pointer"
+                        />
+                      ),
                       id: 'startDate'
                     }}
                     control={control}
@@ -267,6 +275,12 @@ function LeadsTable() {
                   <AppHandledDatePicker
                     name="endDate"
                     selectProps={{
+                      startContent: watch('endDate') && (
+                        <IoCloseOutline
+                          onClick={() => setValue('endDate', null)}
+                          className="cursor-pointer"
+                        />
+                      ),
                       id: 'endDate'
                     }}
                     control={control}
@@ -277,7 +291,7 @@ function LeadsTable() {
                   />
                 </div>
                 <div className="w-full">
-                  <AppHandledSelect
+                  <AppHandledAutocomplete
                     name="operationType"
                     selectProps={{
                       id: 'operationType'

@@ -304,7 +304,7 @@ export default function Home() {
                                 : 'bg-transparent'
                             }`}
                           >
-                            {`${date.day}/${date.month}/${date.year}`}
+                            {`${date.month}/${date.day}/${date.year}`}
                           </Button>
                         ))}
                       </div>
