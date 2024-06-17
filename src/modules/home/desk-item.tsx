@@ -164,6 +164,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
             desk?.isBookingAllowedByOwner
           );
           const isSameDeskSelected = desk?.clientId === selectedDesk?.clientId;
+
           // If the desk is already selected, toggle the selection (cancel it)
           if (isSameDeskSelected) {
             setSelectedDesk(null);
@@ -184,6 +185,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
             setSelectedDesk(desk);
             return;
           }
+
           // If the desk is owned by no one and has not been booked by someone else, it can be selected
           if (!desk?.ownerId && !isAlreadyBooked) {
             setSelectedDesk(desk);
