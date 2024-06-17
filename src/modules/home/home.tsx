@@ -288,9 +288,9 @@ export default function Home() {
         {roomList?.map(z => (
           <Tab key={z?.id} title={z?.name}>
             {!isSubmitting ? (
-              <div className="min-h-screen">
+              <div className="flex flex-col gap-8 min-h-screen">
                 <div className="flex flex-col items-center p-4">
-                  <div className="flex max-[710px]:flex-col items-center gap-2">
+                  <div className="flex xl:flex-row flex-col items-center gap-2">
                     <div className="w-full">
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
                         {generateDates()?.map(date => (
@@ -323,7 +323,7 @@ export default function Home() {
                 </div>
 
                 {selectedDesk && (
-                  <div className="flex justify-between items-center gap-4 mt-2 w-full">
+                  <div className="flex md:flex-row flex-col justify-between items-center gap-4 m-auto mt-4 md:mt-10 w-[300px] md:w-[600px]">
                     <DateRangePicker
                       aria-label="Date (Controlled)"
                       value={submitDate}
