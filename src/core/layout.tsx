@@ -12,7 +12,7 @@ function MainLayout() {
       {user?.id && <AppNavbar />}
       <main>
         <Outlet />
-        <MobileBottomNavigation />
+        {user?.id && <MobileBottomNavigation />}
       </main>
       {/* <footer className="z-10 flex justify-between items-center gap-5 bg-transparent px-12 py-3 w-full">
         <div>
