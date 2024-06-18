@@ -273,7 +273,7 @@ export default function Home() {
   }, [selectedRoom]);
 
   return (
-    <div className="flex flex-col justify-center items-center min-w-[320px]">
+    <div className="flex flex-col justify-center items-center min-w-[320px] overflow-x-hidden">
       <Tabs
         size="sm"
         aria-label="Options"
