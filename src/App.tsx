@@ -37,7 +37,7 @@ function App() {
   const darkMode = useDarkMode(false);
 
   return (
-    <main className={'dark gradient-bg min-h-screen '}>
+    <main className={'dark gradient-bg min-h-screen'}>
       <Suspense
         fallback={
           <div className="min-h-screen">

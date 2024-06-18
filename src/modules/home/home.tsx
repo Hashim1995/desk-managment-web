@@ -245,23 +245,23 @@ export default function Home() {
 
   useEffect(() => {
     getRoomCompact();
-    const perpx = 1.9 / 1920;
-    const scaleCanvas = () => {
-      if (canvasRef.current) {
-        const screenWidth = window.innerWidth;
-        if (screenWidth < 1030) {
-          const ratio = perpx * screenWidth;
-          canvasRef.current.style.transform = `scale(${ratio})`;
-          canvasRef.current.style.transformOrigin = 'top';
-        } else {
-          canvasRef.current.style.transform = 'none';
-        }
-      }
-    };
-    scaleCanvas();
-    window.addEventListener('resize', scaleCanvas);
+    // const perpx = 1.9 / 1920;
+    // const scaleCanvas = () => {
+    //   if (canvasRef.current) {
+    //     const screenWidth = window.innerWidth;
+    //     if (screenWidth < 1030) {
+    //       const ratio = perpx * screenWidth;
+    //       canvasRef.current.style.transform = `scale(${ratio})`;
+    //       canvasRef.current.style.transformOrigin = 'top';
+    //     } else {
+    //       canvasRef.current.style.transform = 'none';
+    //     }
+    //   }
+    // };
+    // scaleCanvas();
+    // window.addEventListener('resize', scaleCanvas);
 
-    return () => window.removeEventListener('resize', scaleCanvas);
+    // return () => window.removeEventListener('resize', scaleCanvas);
   }, []);
 
   useEffect(() => {
@@ -404,7 +404,7 @@ export default function Home() {
                       backgroundRepeat: 'no-repeat',
                       transformOrigin: 'top'
                     }}
-                    className="relative bg-gray-100 border w-[1000px] min-w-[320px] h-[900px] min-h-[320px] overflow-hidden"
+                    className="relative bg-gray-100 scale-35 sm:scale-55 md:scale-75 xl:scale-100 border w-[1000px] min-w-[320px] h-[900px] min-h-[320px] overflow-hidden"
                   >
                     <img
                       alt=""
