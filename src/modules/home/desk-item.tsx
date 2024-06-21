@@ -158,7 +158,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
         onClick={() => {
           const isAlreadyBooked =
             desk?.bookings?.length > 0 && !desk?.isBookedByMe;
-          const isOwnedByMe = desk?.ownerId === user?.id; // user?.id, mevcut kullanıcının ownerId'si
+          const isOwnedByMe = desk?.ownerId === user?.id; //
           const isOwnedByAnother = desk?.ownerId && desk?.ownerId !== user?.id;
           const isBookingAllowedByOwner = Boolean(
             desk?.isBookingAllowedByOwner
@@ -170,7 +170,6 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
             setSelectedDesk(null);
             return;
           }
-          // If the desk is owned by another person and booking is not allowed, it cannot be selected
           if (isOwnedByAnother && !isBookingAllowedByOwner) {
             return;
           }
