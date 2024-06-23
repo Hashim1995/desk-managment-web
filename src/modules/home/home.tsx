@@ -343,7 +343,7 @@ export default function Home() {
                 </div>
 
                 {selectedDesk ? (
-                  <div className="flex md:flex-row justify-between items-center gap-4 mt-4 md:mt-10">
+                  <div className="flex md:flex-row justify-between items-center gap-4 md:mt-10 lg:mt-0 lg:p-4">
                     <div className="flex justify-between items-center gap-2">
                       <DateRangePicker
                         aria-label="Date (Controlled)"
@@ -409,7 +409,7 @@ export default function Home() {
                         radius="none"
                         type="submit"
                         color="success"
-                        className="ms-1"
+                        className="ms-3"
                         variant="solid"
                         onClick={() => bookDesk()}
                       >
