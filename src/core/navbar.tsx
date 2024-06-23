@@ -53,8 +53,8 @@ export default function AppNavbar() {
     // }
   }, [user]);
   return (
-    <Navbar className="gradient-bg">
-      <div className="z-10 flex justify-between items-center gap-5 max-[350px]:gap-1 max-sm:gap-3 bg-transparent m-auto px-1 py-3 w-full md:min-w-[320px] max-w-6xl">
+    <Navbar className="app-navbar gradient-bg">
+      <div className="z-10 flex justify-between items-center gap-5 max-[350px]:gap-1 max-sm:gap-3 bg-transparent m-auto py-3 w-full md:min-w-[320px] max-w-6xl">
         <div className="flex items-center">
           <AcmeLogo />
           <p className="max-sm:hidden font-bold text-inherit text-lg">ACME</p>

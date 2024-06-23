@@ -176,11 +176,13 @@ function LeadsTable() {
         </TableCell>
         <TableCell>
           {item.startDate
-            ? format(parseISO(item.startDate), 'dd.MM.yyyy')
+            ? format(parseISO(item.startDate), 'dd.MM.yyyy HH:mm')
             : '-'}
         </TableCell>
         <TableCell>
-          {item.endDate ? format(parseISO(item.endDate), 'dd.MM.yyyy') : '-'}
+          {item.endDate
+            ? format(parseISO(item.endDate), 'dd.MM.yyyy HH:mm')
+            : '-'}
         </TableCell>
       </TableRow>
     ));
@@ -189,7 +191,7 @@ function LeadsTable() {
   }, []);
   return (
     <div className="flex justify-center w-full">
-      <div className="flex flex-col gap-2 p-4 lg:p-6 w-full max-w-[1024px] h-full min-h-screen">
+      <div className="flex flex-col gap-2 p-4 lg:p-6 w-full max-w-[1000px] h-full min-h-screen">
         <div className="relative flex justify-between items-center pe-6">
           <h3 className="font-semibold text-default-800 text-xl dark:text-white">
             Reports 😎
@@ -205,21 +207,6 @@ function LeadsTable() {
               <div className="flex flex-col gap-5 w-full sm:w-1/2">
                 <div className="w-full">
                   <AppHandledAutocomplete
-                    name="deskId"
-                    selectProps={{
-                      id: 'deskId'
-                    }}
-                    control={control}
-                    label={selectPlaceholderText('Desk name')}
-                    options={
-                      desksList?.map(z => ({ value: z?.id, label: z?.name })) ||
-                      []
-                    }
-                    errors={errors}
-                  />
-                </div>
-                <div className="w-full">
-                  <AppHandledAutocomplete
                     name="roomId"
                     selectProps={{
                       id: 'roomId'
@@ -233,6 +220,22 @@ function LeadsTable() {
                     errors={errors}
                   />
                 </div>
+                <div className="w-full">
+                  <AppHandledAutocomplete
+                    name="deskId"
+                    selectProps={{
+                      id: 'deskId'
+                    }}
+                    control={control}
+                    label={selectPlaceholderText('Desk name')}
+                    options={
+                      desksList?.map(z => ({ value: z?.id, label: z?.name })) ||
+                      []
+                    }
+                    errors={errors}
+                  />
+                </div>
+
                 <div className="w-full">
                   <AppHandledAutocomplete
                     name="deskOwnerId"

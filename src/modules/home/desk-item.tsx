@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 /* eslint-disable consistent-return */
 /* eslint-disable no-nested-ternary */
 import { RootState } from '@/redux/store';
@@ -10,8 +11,10 @@ import {
   Tooltip
 } from '@nextui-org/react';
 import { format, parseISO } from 'date-fns';
+import { FaClock } from 'react-icons/fa';
+
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { BsInfoCircleFill } from 'react-icons/bs';
+// import { BsInfoCircleFill } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { IDesk } from './types';
 
@@ -311,7 +314,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
         style={style}
         className={`absolute animate__animated     cursor-pointer   rounded-full hover:backdrop-blur-xl flex items-center justify-center shadow-md text-white `}
       >
-        <BsInfoCircleFill color={'white'} size={25} />
+        <FaClock size={25} />
         {/* {desk?.isBookedByMe ? (
           <img
             alt=""
