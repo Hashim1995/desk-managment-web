@@ -25,6 +25,9 @@ interface DeskItemProps {
 function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
   const { user } = useSelector((state: RootState) => state.user);
   const [photoUrl, setPhotoUrl] = useState<string>('');
+  const [imageUrls, setImageUrls] = useState<{
+    [key: number]: string;
+  }>({});
 
   const fetchTokenizedImage = async (id: number) => {
     try {
@@ -38,14 +41,35 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
       console.log(err);
     }
   };
-
+  const fetchImageForBooking = async (bookingId: number) => {
+    try {
+      const tokenizedFile = await tokenizeImage({
+        url: '',
+        fileUrl: `${import.meta.env.VITE_BASE_URL}Files/${bookingId}`
+      });
+      setImageUrls(prevUrls => ({
+        ...prevUrls,
+        [bookingId]: tokenizedFile?.url || ''
+      }));
+    } catch (err) {
+      console.error(
+        'Error fetching tokenized image for booking:',
+        bookingId,
+        err
+      );
+      setImageUrls(prevUrls => ({ ...prevUrls, [bookingId]: '' }));
+    }
+  };
   useEffect(() => {
+    desk?.bookings?.forEach(booking => {
+      fetchImageForBooking(booking?.bookedUserPhotoId);
+    });
+
     const photoFileId = desk?.isBookedByMe
       ? user?.photoFileId
       : desk?.bookings?.length
       ? desk?.bookings[0]?.bookedUserPhotoId
       : desk?.ownerPhotoFileId;
-
     if (photoFileId) {
       fetchTokenizedImage(photoFileId);
     }
@@ -77,88 +101,176 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
   return (
     <Tooltip
       content={
-        <Card
-          shadow="none"
-          className="bg-transparent border-none max-w-[300px]"
-        >
-          <div className="flex gap-3 px-3 py-1">
-            <p className="font-semibold text-default-600 text-small">Desk:</p>
-            <p className="text-default-500 text-small">{desk?.name}</p>
-          </div>
-          <CardHeader className="justify-between">
-            {desk?.bookings?.length ? (
-              <div className="flex gap-3">
-                <Avatar isBordered radius="full" size="md" src={photoUrl} />
-                <div className="flex flex-col justify-center items-start">
-                  <h4 className="font-semibold text-default-600 text-small leading-none">
-                    {desk?.bookings[0]?.bookedByName || '-'} 🎉
-                  </h4>
-                </div>
+        <div className="max-h-[400px] overflow-y-auto">
+          {desk?.bookings?.length > 1 ? (
+            desk?.bookings
+              ?.sort(
+                (a, b) =>
+                  new Date(a.startDate).getTime() -
+                  new Date(b.startDate).getTime()
+              )
+              .map(W => (
+                <Card
+                  key={W?.bookingId}
+                  shadow="none"
+                  className="bg-transparent border-none w-[300px]"
+                >
+                  <CardHeader className="justify-between">
+                    <div className="flex gap-3">
+                      <Avatar
+                        isBordered
+                        radius="full"
+                        size="md"
+                        src={imageUrls[W.bookedUserPhotoId] || ''}
+                      />
+                      <div className="flex flex-col justify-center items-start">
+                        <h4 className="font-semibold text-default-600 text-small leading-none">
+                          {W?.bookedByName || '-'} 🎉
+                        </h4>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardFooter className="gap-1">
+                    <div className="flex flex-col gap-1 w-full">
+                      <div className="flex justify-between">
+                        <p className="font-semibold text-default-600 text-small">
+                          Start
+                        </p>
+                        <p className="text-default-500 text-small">
+                          {' '}
+                          {format(parseISO(W?.startDate), 'dd.MM.yyyy')}{' '}
+                          <strong className="text-default-800">
+                            {' '}
+                            {format(parseISO(W?.startDate), 'HH:mm')}
+                          </strong>
+                        </p>
+                      </div>
+                      <div className="flex justify-between">
+                        <p className="font-semibold text-default-600 text-small">
+                          End
+                        </p>
+                        <p className="text-default-500 text-small">
+                          <p className="text-default-500 text-small">
+                            {' '}
+                            {format(parseISO(W?.endDate), 'dd.MM.yyyy')}{' '}
+                            <strong className="text-default-800">
+                              {' '}
+                              {format(parseISO(W?.endDate), 'HH:mm')}
+                            </strong>
+                          </p>
+                        </p>
+                      </div>
+                    </div>
+                  </CardFooter>
+                </Card>
+              ))
+          ) : (
+            <Card
+              shadow="none"
+              className="bg-transparent border-none min-w-[200px]"
+            >
+              <div className="flex gap-3 px-3 py-1">
+                <p className="font-semibold text-default-600 text-small">
+                  Desk:
+                </p>
+                <p className="text-default-500 text-small">{desk?.name}</p>
               </div>
-            ) : desk?.ownerId && !desk?.isBookingAllowedByOwner ? (
-              <div className="flex gap-3">
-                <Avatar isBordered radius="full" size="md" src={photoUrl} />
-                <div className="flex flex-col justify-center items-start">
-                  <h4 className="font-semibold text-default-600 text-small leading-none">
-                    Reserved for {desk?.ownerName || '-'} 🎉
-                  </h4>
-                </div>
-              </div>
-            ) : desk?.ownerId && !desk?.bookings?.length ? (
-              <div className="flex gap-3">
-                <Avatar
-                  isBordered
-                  radius="full"
-                  className="object-cover"
-                  size="md"
-                  src={photoUrl}
-                />
-                <div className="flex flex-col justify-center items-start">
-                  <h4 className="font-semibold text-default-600 text-small leading-none">
-                    Assigned for {desk?.ownerName || '-'} 🎉
-                  </h4>
-                </div>
-              </div>
-            ) : (
-              'No Booking - Available'
-            )}
-          </CardHeader>
+              <CardHeader className="justify-between">
+                {desk?.bookings?.length ? (
+                  <div className="flex gap-3">
+                    <Avatar isBordered radius="full" size="md" src={photoUrl} />
+                    <div className="flex flex-col justify-center items-start">
+                      <h4 className="font-semibold text-default-600 text-small leading-none">
+                        {desk?.bookings[0]?.bookedByName || '-'} 🎉
+                      </h4>
+                    </div>
+                  </div>
+                ) : desk?.ownerId && !desk?.isBookingAllowedByOwner ? (
+                  <div className="flex gap-3">
+                    <Avatar isBordered radius="full" size="md" src={photoUrl} />
+                    <div className="flex flex-col justify-center items-start">
+                      <h4 className="font-semibold text-default-600 text-small leading-none">
+                        Reserved for {desk?.ownerName || '-'} 🎉
+                      </h4>
+                    </div>
+                  </div>
+                ) : desk?.ownerId && !desk?.bookings?.length ? (
+                  <div className="flex gap-3">
+                    <Avatar
+                      isBordered
+                      radius="full"
+                      className="object-cover"
+                      size="md"
+                      src={photoUrl}
+                    />
+                    <div className="flex flex-col justify-center items-start">
+                      <h4 className="font-semibold text-default-600 text-small leading-none">
+                        Assigned for {desk?.ownerName || '-'} 🎉
+                      </h4>
+                    </div>
+                  </div>
+                ) : (
+                  'No Booking - Available'
+                )}
+              </CardHeader>
 
-          {desk?.bookings?.length ? (
-            <CardFooter className="gap-1">
-              <div className="flex flex-col gap-1 w-full">
-                <div className="flex justify-between">
-                  <p className="font-semibold text-default-600 text-small">
-                    Start
-                  </p>
-                  <p className="text-default-500 text-small">
-                    {' '}
-                    {format(
-                      parseISO(desk?.bookings[0]?.startDate),
-                      'dd.MM.yyyy'
-                    )}
-                  </p>
-                </div>
-                <div className="flex justify-between">
-                  <p className="font-semibold text-default-600 text-small">
-                    End
-                  </p>
-                  <p className="text-default-500 text-small">
-                    {format(parseISO(desk?.bookings[0]?.endDate), 'dd.MM.yyyy')}
-                  </p>
-                </div>
-              </div>
-            </CardFooter>
-          ) : null}
-        </Card>
+              {desk?.bookings?.length ? (
+                <CardFooter className="gap-1">
+                  <div className="flex flex-col gap-1 w-full">
+                    <div className="flex justify-between">
+                      <p className="font-semibold text-default-600 text-small">
+                        Start
+                      </p>
+                      <p className="text-default-500 text-small">
+                        <p className="text-default-500 text-small">
+                          {' '}
+                          {format(
+                            parseISO(desk?.bookings[0]?.startDate),
+                            'dd.MM.yyyy'
+                          )}{' '}
+                          <strong className="text-default-800">
+                            {' '}
+                            {format(
+                              parseISO(desk?.bookings[0]?.startDate),
+                              'HH:mm'
+                            )}
+                          </strong>
+                        </p>
+                      </p>
+                    </div>
+                    <div className="flex justify-between">
+                      <p className="font-semibold text-default-600 text-small">
+                        End
+                      </p>
+                      <p className="text-default-500 text-small">
+                        <p className="text-default-500 text-small">
+                          {' '}
+                          {format(
+                            parseISO(desk?.bookings[0]?.endDate),
+                            'dd.MM.yyyy'
+                          )}{' '}
+                          <strong className="text-default-800">
+                            {' '}
+                            {format(
+                              parseISO(desk?.bookings[0]?.endDate),
+                              'HH:mm'
+                            )}
+                          </strong>
+                        </p>
+                      </p>
+                    </div>
+                  </div>
+                </CardFooter>
+              ) : null}
+            </Card>
+          )}
+        </div>
       }
     >
       <div
         aria-hidden
         onClick={() => {
-          const isAlreadyBooked =
-            desk?.bookings?.length > 0 && !desk?.isBookedByMe;
-          const isOwnedByMe = desk?.ownerId === user?.id; // user?.id, mevcut kullanıcının ownerId'si
+          const isOwnedByMe = desk?.ownerId === user?.id; //
           const isOwnedByAnother = desk?.ownerId && desk?.ownerId !== user?.id;
           const isBookingAllowedByOwner = Boolean(
             desk?.isBookingAllowedByOwner
@@ -170,14 +282,19 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
             setSelectedDesk(null);
             return;
           }
-          // If the desk is owned by another person and booking is not allowed, it cannot be selected
           if (isOwnedByAnother && !isBookingAllowedByOwner) {
             return;
           }
           if (isOwnedByMe && !isBookingAllowedByOwner) {
             return;
           }
-          if (!desk?.isBookedByMe && desk?.bookings?.length) {
+          const isBookedAllDay = desk?.bookings?.some(
+            booking =>
+              booking.startDate.includes('T00:00:00') &&
+              booking.endDate.includes('T23:59:00')
+          );
+
+          if (!desk?.isBookedByMe && isBookedAllDay) {
             return;
           }
           if (isOwnedByMe || (isOwnedByAnother && isBookingAllowedByOwner)) {
@@ -187,7 +304,7 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
           }
 
           // If the desk is owned by no one and has not been booked by someone else, it can be selected
-          if (!desk?.ownerId && !isAlreadyBooked) {
+          if (!desk?.ownerId) {
             setSelectedDesk(desk);
           }
         }}

@@ -4,9 +4,10 @@ import {
   today,
   getLocalTimeZone,
   ZonedDateTime,
+  Time,
   now
 } from '@internationalized/date';
-import { format, isToday, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { useState, useEffect, useRef } from 'react';
 import {
   Tabs,
@@ -18,14 +19,21 @@ import {
   DateRangePicker,
   RangeValue,
   useDisclosure,
-  Chip
+  Chip,
+  TimeInput,
+  TimeInputValue
 } from '@nextui-org/react';
 import { RoomsService } from '@/services/rooms-services/rooms-services';
-import AppHandledBorderedButton from '@/components/forms/button/app-handled-bordered-button';
+import AppHandledSolidButton from '@/components/forms/button/app-handled-solid-button';
 import { tokenizeImage } from '@/utils/functions/functions';
 import DeskItem from './desk-item';
 import { IDesk } from './types';
 import DeleteMultiBookingModal from './delete-multi-booking';
+
+const getCurrentTime = () => {
+  const now = new Date();
+  return new Time(now.getHours(), now.getMinutes());
+};
 
 const generateDates = (): ZonedDateTime[] => {
   const today = now(getLocalTimeZone());
@@ -56,27 +64,18 @@ function extractDate(input: string): string {
   return dateMatch ? dateMatch[0] : 'Invalid Date';
 }
 
-function formatDates(
+function prepareBookDatePaylod(
   start: string,
-  end: string
+  end: string,
+  startTime: TimeInputValue,
+  endTime: TimeInputValue
 ): { startDate: string; endDate: string } {
   const startDateString = extractDate(start);
   const endDateString = extractDate(end);
-  const startDate = parseISO(startDateString);
-  const endDate = parseISO(endDateString);
 
-  let formattedStartDate: string;
-  let formattedEndDate: string;
-
-  if (isToday(startDate)) {
-    formattedStartDate = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
-  } else {
-    formattedStartDate = format(startDate, "yyyy-MM-dd'T'00:00:00");
-  }
-  formattedEndDate = format(endDate, "yyyy-MM-dd'T'23:59:00");
   return {
-    startDate: formattedStartDate,
-    endDate: formattedEndDate
+    startDate: `${startDateString}T${startTime.toString()}`,
+    endDate: `${endDateString}T${endTime.toString()}`
   };
 }
 
@@ -84,7 +83,8 @@ export default function Home() {
   const {
     isOpen: deleteMultiBookingIsOpen,
     onOpen: deleteMultiBookingOnOpen,
-    onOpenChange: deleteMultiBookingOnOpenChange
+    onOpenChange: deleteMultiBookingOnOpenChange,
+    onClose: deleteMultiBookingOnClose
   } = useDisclosure();
   const canvasRef = useRef(null);
   const [filterDate, setFilterDate] = useState<ZonedDateTime>(
@@ -94,8 +94,16 @@ export default function Home() {
     start: today(getLocalTimeZone()),
     end: today(getLocalTimeZone())
   });
+  const [submitStartTime, setSubmitStartTime] = useState<TimeInputValue>(
+    getCurrentTime()
+  );
+  const [submitEndTime, setSubmitEndTime] = useState<TimeInputValue>(
+    new Time(23, 59)
+  );
+
   const [refreshComponent, setRefreshComponent] = useState(false);
   const [btnLoading, setbtnLoading] = useState(false);
+  const [btnLoadingCancel, setbtnLoadingCancel] = useState(false);
   const [deskList, setDeskList] = useState<IDesk[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(true);
   const [roomList, setRoomList] = useState([]);
@@ -201,15 +209,20 @@ export default function Home() {
       0
     );
 
+    setSubmitStartTime(new Time(hour, minute));
+    setSubmitEndTime(new Time(23, 59));
+
     setSubmitDate({ start: startZonedDateForSubmit, end: ForSubmit });
   };
 
   async function bookDesk() {
     setbtnLoading(true);
 
-    const { startDate, endDate } = formatDates(
+    const { startDate, endDate } = prepareBookDatePaylod(
       submitDate.start?.toString(),
-      submitDate.end?.toString()
+      submitDate.end?.toString(),
+      submitStartTime,
+      submitEndTime
     );
 
     try {
@@ -228,10 +241,14 @@ export default function Home() {
   }
 
   async function cancelDesk() {
-    setbtnLoading(true);
+    setbtnLoadingCancel(true);
+    const bookingToCancel = selectedDesk.bookings.find(
+      booking => booking.isBookedByMe === true
+    );
+
     try {
       const res = await RoomsService.getInstance().cancelDesk(
-        selectedDesk?.bookings[0]?.bookingId
+        bookingToCancel?.bookingId
       );
       if (res) {
         setSelectedDesk(null);
@@ -240,7 +257,7 @@ export default function Home() {
     } catch (err) {
       console.log(err);
     }
-    setbtnLoading(false);
+    setbtnLoadingCancel(false);
   }
 
   useEffect(() => {
@@ -271,7 +288,9 @@ export default function Home() {
   useEffect(() => {
     setSelectedDesk(null);
   }, [selectedRoom]);
-
+  useEffect(() => {
+    setSelectedDesk(null);
+  }, [refreshComponent]);
   return (
     <div className="flex flex-col justify-center items-center min-w-[320px] overflow-x-hidden">
       <Tabs
@@ -324,48 +343,79 @@ export default function Home() {
                 </div>
 
                 {selectedDesk ? (
-                  <div className="flex md:flex-row flex-col justify-between items-center gap-4 m-auto mt-4 md:mt-10 w-[300px] md:w-[600px]">
-                    <DateRangePicker
-                      aria-label="Date (Controlled)"
-                      value={submitDate}
-                      granularity="day"
-                      onChange={setSubmitDate}
-                      hourCycle={24}
-                      minValue={today(getLocalTimeZone())}
-                      size="lg"
-                      onKeyDown={e => {
-                        e.preventDefault();
-                      }}
-                      visibleMonths={2}
-                      calendarWidth={900}
-                    />
-                    {selectedDesk?.isBookedByMe ? (
-                      <AppHandledBorderedButton
+                  <div className="flex md:flex-row justify-between items-center gap-4 mt-4 md:mt-10">
+                    <div className="flex justify-between items-center gap-2">
+                      <DateRangePicker
+                        aria-label="Date (Controlled)"
+                        value={submitDate}
+                        label="Date"
+                        granularity="day"
+                        onChange={setSubmitDate}
+                        hourCycle={24}
+                        minValue={today(getLocalTimeZone())}
                         size="lg"
-                        isLoading={btnLoading}
-                        radius="none"
-                        type="submit"
-                        onClick={() => {
-                          if (selectedDesk?.bookings?.length > 1) {
-                            deleteMultiBookingOnOpen();
-                          } else {
-                            cancelDesk();
-                          }
+                        onKeyDown={e => {
+                          e.preventDefault();
                         }}
-                      >
-                        Cancel - {selectedDesk?.name}
-                      </AppHandledBorderedButton>
-                    ) : (
-                      <AppHandledBorderedButton
+                        visibleMonths={2}
+                        calendarWidth={900}
+                      />
+                      <TimeInput
+                        label="Start time"
+                        className="w-[200px]"
+                        size="lg"
+                        hourCycle={24}
+                        value={submitStartTime}
+                        onChange={setSubmitStartTime}
+                      />
+                      <TimeInput
+                        label="End time"
+                        className="w-[200px]"
+                        size="lg"
+                        hourCycle={24}
+                        value={submitEndTime}
+                        onChange={setSubmitEndTime}
+                      />
+                    </div>
+                    <div>
+                      {selectedDesk?.isBookedByMe && (
+                        <AppHandledSolidButton
+                          size="lg"
+                          isLoading={btnLoadingCancel}
+                          color="danger"
+                          radius="none"
+                          type="submit"
+                          onClick={() => {
+                            if (selectedDesk?.bookings?.length > 0) {
+                              const countBookedByMe =
+                                selectedDesk.bookings?.filter(
+                                  booking => booking?.isBookedByMe
+                                )?.length;
+
+                              if (countBookedByMe > 1) {
+                                deleteMultiBookingOnOpen();
+                              } else {
+                                cancelDesk();
+                              }
+                            }
+                          }}
+                        >
+                          Cancel
+                        </AppHandledSolidButton>
+                      )}
+                      <AppHandledSolidButton
                         size="lg"
                         isLoading={btnLoading}
                         radius="none"
                         type="submit"
+                        color="success"
+                        className="ms-1"
+                        variant="solid"
                         onClick={() => bookDesk()}
                       >
-                        Book - {selectedDesk?.name}
-                      </AppHandledBorderedButton>
-                    )}
+                        Book {selectedDesk?.name}
+                      </AppHandledSolidButton>
+                    </div>
                   </div>
                 ) : null}
                 <div className="relative flex justify-center items-center mt-10">
@@ -432,6 +482,9 @@ export default function Home() {
         <DeleteMultiBookingModal
           onOpenChange={deleteMultiBookingOnOpenChange}
           isOpen={deleteMultiBookingIsOpen}
+          selectedDesk={selectedDesk}
+          deleteMultiBookingOnClose={deleteMultiBookingOnClose}
+          setRefreshComponent={setRefreshComponent}
         />
       )}
     </div>
