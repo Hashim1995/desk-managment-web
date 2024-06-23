@@ -19,10 +19,6 @@ const genderOptions: selectOption[] = [
   }
 ];
 
-
-
-
-
 /**
  * Creates an array of objects representing days of the month.
  * Each object contains a value and label representing the day.
@@ -70,9 +66,4 @@ const monthsList = getMonthsArray();
 const daysList = createDaysArray();
 const yearsList = createYearsArray();
 
-export {
-  genderOptions,
-  daysList,
-  yearsList,
-  monthsList,
-};
+export { genderOptions, daysList, yearsList, monthsList };
