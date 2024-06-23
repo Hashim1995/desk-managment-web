@@ -83,7 +83,8 @@ export default function Home() {
   const {
     isOpen: deleteMultiBookingIsOpen,
     onOpen: deleteMultiBookingOnOpen,
-    onOpenChange: deleteMultiBookingOnOpenChange
+    onOpenChange: deleteMultiBookingOnOpenChange,
+    onClose: deleteMultiBookingOnClose
   } = useDisclosure();
   const canvasRef = useRef(null);
   const [filterDate, setFilterDate] = useState<ZonedDateTime>(
@@ -102,6 +103,7 @@ export default function Home() {
 
   const [refreshComponent, setRefreshComponent] = useState(false);
   const [btnLoading, setbtnLoading] = useState(false);
+  const [btnLoadingCancel, setbtnLoadingCancel] = useState(false);
   const [deskList, setDeskList] = useState<IDesk[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(true);
   const [roomList, setRoomList] = useState([]);
@@ -239,10 +241,14 @@ export default function Home() {
   }
 
   async function cancelDesk() {
-    setbtnLoading(true);
+    setbtnLoadingCancel(true);
+    const bookingToCancel = selectedDesk.bookings.find(
+      booking => booking.isBookedByMe === true
+    );
+
     try {
       const res = await RoomsService.getInstance().cancelDesk(
-        selectedDesk?.bookings[0]?.bookingId
+        bookingToCancel?.bookingId
       );
       if (res) {
         setSelectedDesk(null);
@@ -251,7 +257,7 @@ export default function Home() {
     } catch (err) {
       console.log(err);
     }
-    setbtnLoading(false);
+    setbtnLoadingCancel(false);
   }
 
   useEffect(() => {
@@ -282,7 +288,9 @@ export default function Home() {
   useEffect(() => {
     setSelectedDesk(null);
   }, [selectedRoom]);
-
+  useEffect(() => {
+    setSelectedDesk(null);
+  }, [refreshComponent]);
   return (
     <div className="flex flex-col justify-center items-center min-w-[320px] overflow-x-hidden">
       <Tabs
@@ -369,37 +377,45 @@ export default function Home() {
                         onChange={setSubmitEndTime}
                       />
                     </div>
+                    <div>
+                      {selectedDesk?.isBookedByMe && (
+                        <AppHandledSolidButton
+                          size="lg"
+                          isLoading={btnLoadingCancel}
+                          color="danger"
+                          radius="none"
+                          type="submit"
+                          onClick={() => {
+                            if (selectedDesk?.bookings?.length > 0) {
+                              const countBookedByMe =
+                                selectedDesk.bookings?.filter(
+                                  booking => booking?.isBookedByMe
+                                )?.length;
 
-                    {selectedDesk?.isBookedByMe ? (
-                      <AppHandledSolidButton
-                        size="lg"
-                        isLoading={btnLoading}
-                        color="danger"
-                        radius="none"
-                        type="submit"
-                        onClick={() => {
-                          if (selectedDesk?.bookings?.length > 1) {
-                            deleteMultiBookingOnOpen();
-                          } else {
-                            cancelDesk();
-                          }
-                        }}
-                      >
-                        Cancel - {selectedDesk?.name}
-                      </AppHandledSolidButton>
-                    ) : (
+                              if (countBookedByMe > 1) {
+                                deleteMultiBookingOnOpen();
+                              } else {
+                                cancelDesk();
+                              }
+                            }
+                          }}
+                        >
+                          Cancel
+                        </AppHandledSolidButton>
+                      )}
                       <AppHandledSolidButton
                         size="lg"
                         isLoading={btnLoading}
                         radius="none"
                         type="submit"
                         color="success"
+                        className="ms-1"
                         variant="solid"
                         onClick={() => bookDesk()}
                       >
-                        Book - {selectedDesk?.name}
+                        Book {selectedDesk?.name}
                       </AppHandledSolidButton>
-                    )}
+                    </div>
                   </div>
                 ) : null}
                 <div className="relative flex justify-center items-center mt-10">
@@ -466,6 +482,9 @@ export default function Home() {
         <DeleteMultiBookingModal
           onOpenChange={deleteMultiBookingOnOpenChange}
           isOpen={deleteMultiBookingIsOpen}
+          selectedDesk={selectedDesk}
+          deleteMultiBookingOnClose={deleteMultiBookingOnClose}
+          setRefreshComponent={setRefreshComponent}
         />
       )}
     </div>
