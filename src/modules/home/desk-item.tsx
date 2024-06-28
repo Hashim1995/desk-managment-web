@@ -78,19 +78,29 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
     }
   }, [desk]);
 
+  const getBackgroundColor = (status: number) => {
+    switch (status) {
+      case 1:
+      case 2:
+      case 5:
+      case 8:
+        return '#006FEE'; // Blue
+      case 3:
+        return '#3f3f46'; // Gray
+      case 4:
+      case 9:
+        return '#17c964'; // Green
+      case 6:
+        return '#f31260'; // Red
+      case 7:
+        return '#9b59b6'; // Purple
+      default:
+        return '#3f3f46'; // Default Gray
+    }
+  };
+
   const style = {
-    backgroundColor:
-      !desk?.isBookedByMe && desk?.bookings?.length
-        ? '#f31260'
-        : desk?.ownerId === user?.id
-        ? '#006FEE'
-        : desk?.isBookedByMe
-        ? '#006FEE'
-        : desk?.ownerId && !desk?.isBookingAllowedByOwner
-        ? '#f31260'
-        : desk?.ownerId && !desk?.bookings?.length
-        ? '#3f3f46'
-        : '#17c964',
+    backgroundColor: getBackgroundColor(desk?.status),
     width: `${desk?.width}px`,
     height: `${desk?.height}px`,
     opacity:
@@ -100,6 +110,9 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
     // opacity: `${desk?.opacity}%`,
     transform: `translate3d(${desk.positionX}px, ${desk.positionY}px, 0)`
   };
+
+  const isClickable = (status: number): boolean =>
+    [2, 4, 5, 7, 8, 9].includes(status);
 
   return (
     <Tooltip
@@ -273,42 +286,13 @@ function DeskItem({ desk, setSelectedDesk, selectedDesk }: DeskItemProps) {
       <div
         aria-hidden
         onClick={() => {
-          const isOwnedByMe = desk?.ownerId === user?.id; //
-          const isOwnedByAnother = desk?.ownerId && desk?.ownerId !== user?.id;
-          const isBookingAllowedByOwner = Boolean(
-            desk?.isBookingAllowedByOwner
-          );
-          const isSameDeskSelected = desk?.clientId === selectedDesk?.clientId;
-
-          // If the desk is already selected, toggle the selection (cancel it)
-          if (isSameDeskSelected) {
-            setSelectedDesk(null);
-            return;
-          }
-          if (isOwnedByAnother && !isBookingAllowedByOwner) {
-            return;
-          }
-          if (isOwnedByMe && !isBookingAllowedByOwner) {
-            return;
-          }
-          const isBookedAllDay = desk?.bookings?.some(
-            booking =>
-              booking.startDate.includes('T00:00:00') &&
-              booking.endDate.includes('T23:59:00')
-          );
-
-          if (!desk?.isBookedByMe && isBookedAllDay) {
-            return;
-          }
-          if (isOwnedByMe || (isOwnedByAnother && isBookingAllowedByOwner)) {
-            // If the desk is owned by me, or it is owned by another person but booking is allowed, it can be selected
-            setSelectedDesk(desk);
-            return;
-          }
-
-          // If the desk is owned by no one and has not been booked by someone else, it can be selected
-          if (!desk?.ownerId) {
-            setSelectedDesk(desk);
+          if (isClickable(desk.status)) {
+            if (desk.deskId === selectedDesk?.deskId) {
+              // If the desk is already selected, toggle the selection (cancel it)
+              setSelectedDesk(null);
+            } else {
+              setSelectedDesk(desk);
+            }
           }
         }}
         style={style}
