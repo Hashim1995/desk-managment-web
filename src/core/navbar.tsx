@@ -54,7 +54,7 @@ export default function AppNavbar() {
   }, [user]);
   return (
     <Navbar className="app-navbar gradient-bg">
-      <div className="z-10 flex justify-between items-center gap-5 max-[350px]:gap-1 max-sm:gap-3 bg-transparent m-auto py-3 w-full md:min-w-[320px] max-w-6xl">
+      <div className="z-10 flex px-4 lg:px-0 justify-between items-center gap-5 max-[350px]:gap-1 max-sm:gap-3 bg-transparent m-auto py-3 w-full md:min-w-[320px] max-w-6xl">
         <div className="flex items-center">
           <AcmeLogo />
           <p className="max-sm:hidden font-bold text-inherit text-lg">ACME</p>
@@ -124,7 +124,17 @@ export default function AppNavbar() {
         <div className="block md:hidden">
           <Dropdown>
             <DropdownTrigger>
-              <Avatar isBordered src="" />
+              <User
+                name={user ? `${user.firstName} ${user.lastName}` : t('empty')}
+                description={user.email || t('empty')}
+                avatarProps={{
+                  src: photoUrl
+                }}
+                classNames={{
+                  description: 'text-default-900 dark:text-white'
+                }}
+                className="sm:flex hidden text-default-800 dark:text-white"
+              />
             </DropdownTrigger>
             <DropdownMenu aria-label="Static Actions">
               <DropdownItem
