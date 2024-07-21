@@ -343,8 +343,8 @@ export default function Home() {
                 </div>
 
                 {selectedDesk ? (
-                  <div className="flex md:flex-row justify-between items-center gap-4 md:mt-10 lg:mt-0 lg:p-4">
-                    <div className="flex justify-between items-center gap-2">
+                  <div className="flex flex-col xl:flex-row justify-between items-center gap-4 md:mt-10 lg:mt-0 lg:p-4">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-2">
                       <DateRangePicker
                         aria-label="Date (Controlled)"
                         value={submitDate}
